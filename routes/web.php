@@ -3,18 +3,28 @@
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\IndustryController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InquiryController;
+use App\Http\Controllers\RequirementTypeController;
 
-// Default home
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
-
-// Dashboard
-Route::view('dashboard', 'dashboard')
+// ✅ Default home redirects to dashboard (requires login)
+Route::view('/', 'dashboard')
     ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+    ->name('home');
 
-// Settings (Volt pages)
+// ✅ Dashboard routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Main dashboard view
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // AJAX endpoint to get live dashboard stats & chart data
+    Route::get('/dashboard/stats', [DashboardController::class, 'stats'])->name('dashboard.stats');
+});
+
+// ✅ Settings (Volt pages)
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
@@ -34,33 +44,22 @@ Route::middleware(['auth'])->group(function () {
         ->name('two-factor.show');
 });
 
-// ✅ Application routes (protected)
-use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\IndustryController;
-use App\Http\Controllers\InquiryController;
-use App\Http\Controllers\RequirementTypeController;
-
+// ✅ Application CRUD routes (protected)
 Route::middleware(['auth'])->group(function () {
-
-    // Redirect dashboard to company list if needed
-    //Route::get('/dashboard', [CompanyController::class, 'index'])->name('dashboard');
-
-    // Companies CRUD
+    // Companies
     Route::resource('companies', CompanyController::class);
 
-    // Customers CRUD
+    // Customers
     Route::resource('customers', CustomerController::class);
 
-    // Industries CRUD
+    // Industries
     Route::resource('industries', IndustryController::class);
 
-    // Inquiries CRUD
+    // Inquiries
     Route::resource('inquiries', InquiryController::class);
 
-    // Requirement Types CRUD
+    // Requirement Types
     Route::resource('requirement-types', RequirementTypeController::class);
-
 });
 
 require __DIR__.'/auth.php';

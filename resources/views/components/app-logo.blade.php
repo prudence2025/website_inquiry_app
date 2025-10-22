@@ -1,6 +1,3 @@
-<div class="flex aspect-square size-8 items-center justify-center rounded-md bg-accent-content text-accent-foreground">
-    <x-app-logo-icon class="size-5 fill-current text-white dark:text-black" />
-</div>
-<div class="ms-1 grid flex-1 text-start text-sm">
-    <span class="mb-0.5 truncate leading-tight font-semibold">Website Inquiries</span>
+<div class="flex h-10 w-48 items-center justify-center rounded-md">
+    <img src="{{ asset('images/prudence-web-inquiries-logo-v2.png') }}" alt="Prudence Web Inquiries Logo" class="h-full w-auto object-contain">
 </div>
