@@ -11,7 +11,7 @@ use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\RequirementTypeController;
 
 // ✅ Default home redirects to dashboard (requires login)
-Route::view('/', 'dashboard')
+Route::get('/', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('home');
 
