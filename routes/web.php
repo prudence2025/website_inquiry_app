@@ -10,18 +10,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\RequirementTypeController;
 
-// ✅ Default home redirects to dashboard (requires login)
-Route::get('/', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('home');
-
-// ✅ Dashboard routes
+// ✅ Default home and dashboard (both handled by controller)
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Main dashboard view
+    Route::get('/', [DashboardController::class, 'index'])->name('home');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-    // AJAX endpoint to get live dashboard stats & chart data
-    Route::get('/dashboard/stats', [DashboardController::class, 'stats'])->name('dashboard.stats');
 });
 
 // ✅ Settings (Volt pages)
@@ -46,19 +38,10 @@ Route::middleware(['auth'])->group(function () {
 
 // ✅ Application CRUD routes (protected)
 Route::middleware(['auth'])->group(function () {
-    // Companies
     Route::resource('companies', CompanyController::class);
-
-    // Customers
     Route::resource('customers', CustomerController::class);
-
-    // Industries
     Route::resource('industries', IndustryController::class);
-
-    // Inquiries
     Route::resource('inquiries', InquiryController::class);
-
-    // Requirement Types
     Route::resource('requirement-types', RequirementTypeController::class);
 });
 

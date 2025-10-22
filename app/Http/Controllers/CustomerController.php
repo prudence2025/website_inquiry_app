@@ -43,7 +43,7 @@ class CustomerController extends Controller
     }
     public function create()
     {
-        $companies = Company::all();
+        $companies = Company::orderBy('created_at', 'desc')->get();
         return view('customers.create', compact('companies'));
     }
 

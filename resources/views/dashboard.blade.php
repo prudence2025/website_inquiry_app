@@ -75,45 +75,96 @@
             </form>
 
             {{-- Chart --}}
-            <div class="flex-1 h-full">
-                <canvas id="inquiriesChart"  height="400"></canvas>
+            <div x-data="dashboardChart()" x-init="initChart()" class="flex-1 h-full">
+                <canvas id="inquiriesChart" height="400"></canvas>
             </div>
         </div>
     </div>
 
-    {{-- Chart.js --}}
+   {{-- Chart.js CDN --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    {{-- UPDATED: Alpine.js Component --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const ctx = document.getElementById('inquiriesChart').getContext('2d');
-            const chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: {!! json_encode($labels) !!},
-                    datasets: [{
-                        label: 'Inquiries',
-                        data: {!! json_encode($series) !!},
-                        fill: true,
-                        tension: 0.3,
-                        borderWidth: 2,
-                        borderColor: '#4f46e5',
-                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                        pointRadius: 3,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { display: true },
-                        y: { beginAtZero: true }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { mode: 'index' }
-                    }
+    function dashboardChart() {
+        let chartInstance = null;
+        let chartLoaded = false;
+        let errorMsg = '';
+    
+        return {
+            chartLoaded,
+            errorMsg,
+        
+            initChart() {
+                this.refreshChart();
+            },
+        
+            destroyChart() {
+                if (chartInstance) {
+                    chartInstance.destroy();
+                    chartInstance = null;
                 }
-            });
-        });
+                chartLoaded = false;
+                errorMsg = '';
+            },
+        
+            refreshChart() {
+                this.destroyChart();
+            
+                // Wait a bit for DOM/data to settle (helps on fresh login)
+                setTimeout(() => {
+                    const ctx = document.getElementById('inquiriesChart');
+                    if (!ctx) {
+                        errorMsg = 'Canvas element not found.';
+                        return;
+                    }
+                
+                    try {
+                        // Verify Chart.js is loaded
+                        if (typeof Chart === 'undefined') {
+                            errorMsg = 'Chart.js not loaded. Retrying...';
+                            // Retry once after 1s
+                            setTimeout(() => this.refreshChart(), 1000);
+                            return;
+                        }
+                    
+                        chartInstance = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: @json($labels),
+                                datasets: [{
+                                    label: 'Inquiries',
+                                    data: @json($series),
+                                    fill: true,
+                                    tension: 0.3,
+                                    borderWidth: 2,
+                                    borderColor: '#2B7BD8',
+                                    backgroundColor: 'rgba(34, 53, 109, 0.1)',
+                                    pointRadius: 3,
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    x: { display: true },
+                                    y: { beginAtZero: true }
+                                },
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: { mode: 'index' }
+                                }
+                            }
+                        });
+                    
+                        chartLoaded = true;
+                    } catch (error) {
+                        errorMsg = `Chart error: ${error.message}`;
+                        console.error('Chart init error:', error);
+                    }
+                }, 200); // 200ms delay for stability
+            }
+        }
+    }
     </script>
 </x-layouts.app>

@@ -170,7 +170,9 @@ public function index(Request $request)
 
    public function create()
     {
-        $companies = Company::with('customers:id,name,company_id')->get(['id', 'name']);
+        $companies = Company::with('customers:id,name,company_id')
+                        ->orderBy('created_at', 'desc')
+                        ->get(['id', 'name']);
         $requirementTypes = RequirementType::all(['id', 'name']);
         $receivers = User::pluck('name');
         $processLevels = [
