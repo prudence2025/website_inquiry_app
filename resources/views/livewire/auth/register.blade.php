@@ -3,7 +3,6 @@
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
@@ -17,34 +16,44 @@ new #[Layout('components.layouts.auth')] class extends Component {
     /**
      * Handle an incoming registration request.
      */
-    public function register(): void
-    {
-        $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
-        ]);
+public function register()
+{
+    $validated = $this->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+        'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+    ]);
 
-        event(new Registered(($user = User::create($validated))));
+    $user = User::create([
+        'name' => $validated['name'],
+        'email' => $validated['email'],
+        'password' => bcrypt($validated['password']),
+    ]);
 
-        Auth::login($user);
+    event(new Registered($user));
 
-        Session::regenerate();
+    Auth::login($user);
+    request()->session()->regenerate();
 
-        $this->redirectIntended(route('dashboard', absolute: false), navigate: true);
-    }
-}; ?>
+    return redirect()->intended(route('dashboard'));
+}
+
+};
+?>
 
 <div class="flex flex-col gap-6">
-    <x-auth-header :title="__('Create an account')" :description="__('Enter your details below to create your account')" />
+    <x-auth-header 
+        :title="__('Create an account')" 
+        :description="__('Enter your details below to create your account')" 
+    />
 
     <!-- Session Status -->
     <x-auth-session-status class="text-center" :status="session('status')" />
 
-    <form method="POST" wire:submit="register" class="flex flex-col gap-6">
+    <form wire:submit.prevent="register" class="flex flex-col gap-6">
         <!-- Name -->
         <flux:input
-            wire:model="name"
+            wire:model.defer="name"
             :label="__('Name')"
             type="text"
             required
@@ -55,7 +64,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
         <!-- Email Address -->
         <flux:input
-            wire:model="email"
+            wire:model.defer="email"
             :label="__('Email address')"
             type="email"
             required
@@ -65,7 +74,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
         <!-- Password -->
         <flux:input
-            wire:model="password"
+            wire:model.defer="password"
             :label="__('Password')"
             type="password"
             required
@@ -76,7 +85,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
         <!-- Confirm Password -->
         <flux:input
-            wire:model="password_confirmation"
+            wire:model.defer="password_confirmation"
             :label="__('Confirm password')"
             type="password"
             required
@@ -86,7 +95,12 @@ new #[Layout('components.layouts.auth')] class extends Component {
         />
 
         <div class="flex items-center justify-end">
-            <flux:button type="submit" variant="primary" class="w-full" data-test="register-user-button">
+            <flux:button 
+                type="submit" 
+                variant="primary" 
+                class="w-full" 
+                data-test="register-user-button"
+            >
                 {{ __('Create account') }}
             </flux:button>
         </div>
@@ -94,6 +108,8 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
     <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
         <span>{{ __('Already have an account?') }}</span>
-        <flux:link :href="route('login')" wire:navigate>{{ __('Log in') }}</flux:link>
+        <flux:link :href="route('login')" wire:navigate>
+            {{ __('Log in') }}
+        </flux:link>
     </div>
 </div>

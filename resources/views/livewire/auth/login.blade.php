@@ -4,7 +4,6 @@ use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -33,6 +32,14 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
         $user = $this->validateCredentials();
 
+        // Regenerate session BEFORE login to prevent 419
+        Session::regenerate();
+
+        Auth::login($user, $this->remember);
+
+        RateLimiter::clear($this->throttleKey());
+
+        // Store 2FA session if enabled
         if (Features::canManageTwoFactorAuthentication() && $user->hasEnabledTwoFactorAuthentication()) {
             Session::put([
                 'login.id' => $user->getKey(),
@@ -40,14 +47,8 @@ new #[Layout('components.layouts.auth')] class extends Component {
             ]);
 
             $this->redirect(route('two-factor.login'), navigate: true);
-
             return;
         }
-
-        Auth::login($user, $this->remember);
-
-        RateLimiter::clear($this->throttleKey());
-        Session::regenerate();
 
         $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
     }
@@ -57,7 +58,10 @@ new #[Layout('components.layouts.auth')] class extends Component {
      */
     protected function validateCredentials(): User
     {
-        $user = Auth::getProvider()->retrieveByCredentials(['email' => $this->email, 'password' => $this->password]);
+        $user = Auth::getProvider()->retrieveByCredentials([
+            'email' => $this->email,
+            'password' => $this->password,
+        ]);
 
         if (! $user || ! Auth::getProvider()->validateCredentials($user, ['password' => $this->password])) {
             RateLimiter::hit($this->throttleKey());
@@ -98,7 +102,8 @@ new #[Layout('components.layouts.auth')] class extends Component {
     {
         return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
     }
-}; ?>
+};
+?>
 
 <div class="flex flex-col gap-6">
     <x-auth-header :title="__('Log in to your account')" :description="__('Enter your email and password below to log in')" />
@@ -107,6 +112,8 @@ new #[Layout('components.layouts.auth')] class extends Component {
     <x-auth-session-status class="text-center" :status="session('status')" />
 
     <form method="POST" wire:submit="login" class="flex flex-col gap-6">
+        @csrf <!-- IMPORTANT: CSRF token -->
+    
         <!-- Email Address -->
         <flux:input
             wire:model="email"
@@ -117,7 +124,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
             autocomplete="email"
             placeholder="email@example.com"
         />
-
+    
         <!-- Password -->
         <div class="relative">
             <flux:input
@@ -129,17 +136,17 @@ new #[Layout('components.layouts.auth')] class extends Component {
                 :placeholder="__('Password')"
                 viewable
             />
-
+    
             @if (Route::has('password.request'))
                 <flux:link class="absolute top-0 text-sm end-0" :href="route('password.request')" wire:navigate>
                     {{ __('Forgot your password?') }}
                 </flux:link>
             @endif
         </div>
-
+    
         <!-- Remember Me -->
         <flux:checkbox wire:model="remember" :label="__('Remember me')" />
-
+    
         <div class="flex items-center justify-end">
             <flux:button variant="primary" type="submit" class="w-full" data-test="login-button">
                 {{ __('Log in') }}

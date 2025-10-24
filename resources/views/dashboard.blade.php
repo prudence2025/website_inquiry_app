@@ -81,24 +81,24 @@
         </div>
     </div>
 
-   {{-- Chart.js CDN --}}
+    {{-- Chart.js CDN --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     {{-- UPDATED: Alpine.js Component --}}
     <script>
     function dashboardChart() {
         let chartInstance = null;
         let chartLoaded = false;
         let errorMsg = '';
-    
+
         return {
             chartLoaded,
             errorMsg,
-        
+
             initChart() {
                 this.refreshChart();
             },
-        
+
             destroyChart() {
                 if (chartInstance) {
                     chartInstance.destroy();
@@ -107,10 +107,10 @@
                 chartLoaded = false;
                 errorMsg = '';
             },
-        
+
             refreshChart() {
                 this.destroyChart();
-            
+
                 // Wait a bit for DOM/data to settle (helps on fresh login)
                 setTimeout(() => {
                     const ctx = document.getElementById('inquiriesChart');
@@ -118,7 +118,7 @@
                         errorMsg = 'Canvas element not found.';
                         return;
                     }
-                
+
                     try {
                         // Verify Chart.js is loaded
                         if (typeof Chart === 'undefined') {
@@ -127,7 +127,7 @@
                             setTimeout(() => this.refreshChart(), 1000);
                             return;
                         }
-                    
+
                         chartInstance = new Chart(ctx, {
                             type: 'line',
                             data: {
@@ -156,7 +156,7 @@
                                 }
                             }
                         });
-                    
+
                         chartLoaded = true;
                     } catch (error) {
                         errorMsg = `Chart error: ${error.message}`;
