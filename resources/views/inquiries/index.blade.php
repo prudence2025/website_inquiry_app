@@ -46,7 +46,7 @@
                         <div class="max-h-60 overflow-y-auto">
                             <template x-for="option in filteredOptions" :key="option.id">
                                 <div @click="select(option); open=false;"
-                                     class="p-2 cursor-pointer text-black rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700"
+                                     class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700"
                                      x-text="option.name"></div>
                             </template>
                         </div>
@@ -74,7 +74,7 @@
                         <div class="max-h-60 overflow-y-auto">
                             <template x-for="option in filteredOptions" :key="option.id">
                                 <div @click="select(option); open=false;"
-                                     class="p-2 cursor-pointer text-black rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700"
+                                     class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700"
                                      x-text="option.name"></div>
                             </template>
                         </div>
@@ -95,10 +95,10 @@
             </div>
 
             {{-- Buttons --}}
-            <div class="col-span-full flex gap-3 mt-3 justify-end">
-                <flux:button type="submit" class="mt-3" variant="primary">Filter</flux:button>
-                <flux:button as="a" class="mt-3" href="{{ route('inquiries.index') }}" variant="danger">Reset</flux:button>
-               <flux:button type="submit" class="mt-3" name="export" value="csv" variant="primary">
+            <div class="col-span-full flex gap-3 justify-end">
+                <flux:button type="submit" variant="primary">Filter</flux:button>
+                <flux:button as="a" href="{{ route('inquiries.index') }}" variant="danger">Reset</flux:button>
+               <flux:button type="submit" name="export" value="csv" variant="primary">
                     <x-gmdi-download class="inline w-4 h-4 me-2" width="16" height="16" /> 
                     Export CSV
                 </flux:button>

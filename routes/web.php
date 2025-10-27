@@ -9,6 +9,7 @@ use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\RequirementTypeController;
+use App\Http\Controllers\UserController;
 
 // ✅ Default home and dashboard (both handled by controller)
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -38,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
 
 // ✅ Application CRUD routes (protected)
 Route::middleware(['auth'])->group(function () {
+    Route::resource('users', UserController::class); 
     Route::resource('companies', CompanyController::class);
     Route::resource('customers', CustomerController::class);
     Route::resource('industries', IndustryController::class);

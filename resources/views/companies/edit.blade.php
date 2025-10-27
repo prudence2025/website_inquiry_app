@@ -57,7 +57,7 @@
                         <div class="max-h-60 overflow-y-auto">
                             <template x-for="option in filteredOptions" :key="option.id">
                                 <div @click="select(option); open = false;"
-                                     class="p-2 cursor-pointer rounded-md text-black dark:text-black hover:bg-gray-100 dark:hover:bg-neutral-700">
+                                     class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <span x-text="option.name"></span>
                                 </div>
                             </template>

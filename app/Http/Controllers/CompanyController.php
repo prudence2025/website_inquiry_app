@@ -44,7 +44,7 @@ public function index(Request $request)
 
     public function create()
     {
-        $industries = Industry::all();
+        $industries = Industry::orderBy('name')->get();
         return view('companies.create', compact('industries'));
     }
 
@@ -65,7 +65,7 @@ public function index(Request $request)
 
     public function edit(Company $company)
     {
-        $industries = Industry::all();
+        $industries = Industry::orderBy('name')->get();
         // The variable name was changed in the previous step, let's keep it consistent
         $selectedIndustry = $company->industries->first()?->id;
         return view('companies.edit', compact('company', 'industries', 'selectedIndustry'));

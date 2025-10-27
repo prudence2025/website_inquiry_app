@@ -42,7 +42,7 @@
                     <div class="max-h-60 overflow-y-auto">
                         <template x-for="option in filteredOptions" :key="option.id">
                             <div @click="select(option); open = false;"
-                                 class="p-2 cursor-pointer rounded-md text-black dark:text-black hover:bg-gray-100 dark:hover:bg-neutral-700"
+                                 class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700"
                                  x-text="option.name"></div>
                         </template>
                         <p x-show="filteredOptions.length === 0" class="p-2 text-center text-gray-500 dark:text-gray-400 text-sm">No results found</p>
@@ -72,7 +72,7 @@
                     <div class="max-h-60 overflow-y-auto">
                         <template x-for="company in filteredCompanies" :key="company.id">
                             <div @click="selectCompany(company); open = false;"
-                                 class="p-2 cursor-pointer rounded-md text-black dark:text-black hover:bg-gray-100 dark:hover:bg-neutral-700"
+                                 class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700"
                                  x-text="company.name"></div>
                         </template>
                     </div>
@@ -107,7 +107,7 @@
                     <div class="max-h-60 overflow-y-auto">
                         <template x-for="customer in filteredCustomers" :key="customer.id">
                             <div @click="selectCustomer(customer); open = false;"
-                                 class="p-2 cursor-pointer rounded-md text-black dark:text-black hover:bg-gray-100 dark:hover:bg-neutral-700"
+                                 class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700"
                                  x-text="customer.name"></div>
                         </template>
                         <p x-show="filteredCustomers.length === 0"
@@ -117,11 +117,7 @@
                 <input type="hidden" name="customer_id" :value="selectedCustomerId" />
             </div>
 
-
-            <flux:label>{{ __('More Information') }}</flux:label>
-            <flux:textarea name="more_info" rows="3">{{ old('more_info', $inquiry->more_info) }}</flux:textarea>
-
-                        {{-- Process Level --}}
+            {{-- Process Level --}}
             <flux:label>{{ __('Process Level') }}</flux:label>
             <flux:select name="process_level" required>
                 <option value="">{{ __('Select Process Level') }}</option>
@@ -132,6 +128,9 @@
             
             <flux:input name="amount" :label="__('Amount (LKR)')" type="number" step="0.01"
                         value="{{ old('amount', $inquiry->amount) }}" />
+
+            <flux:label>{{ __('More Information') }}</flux:label>
+            <flux:textarea name="more_info" rows="3">{{ old('more_info', $inquiry->more_info) }}</flux:textarea>
 
             {{-- Buttons --}}
             <div class="flex justify-end pt-4 gap-3 mt-4">

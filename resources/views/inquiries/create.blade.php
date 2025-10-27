@@ -38,7 +38,7 @@
                     <div class="max-h-60 overflow-y-auto">
                         <template x-for="option in filteredOptions" :key="option.id">
                             <div @click="select(option); open = false;"
-                                 class="p-2 cursor-pointer rounded-md text-black dark:text-black hover:bg-gray-100 dark:hover:bg-neutral-700"
+                                 class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700"
                                  x-text="option.name"></div>
                         </template>
                     </div>
@@ -65,25 +65,15 @@
                     <div class="max-h-60 overflow-y-auto">
                         <template x-for="company in filteredCompanies" :key="company.id">
                             <div @click="selectCompany(company); open = false;"
-                                 class="p-2 cursor-pointer rounded-md text-black dark:text-black hover:bg-gray-100 dark:hover:bg-neutral-700"
+                                 class="p-2 cursor-pointer rounded-md  hover:bg-gray-100 dark:hover:bg-neutral-700"
                                  x-text="company.name"></div>
                         </template>
                     </div>
                 </div>
                 <input type="hidden" name="company_id" :value="selectedCompanyId">
             </div>
-
-             {{-- Process Level --}}
-            <flux:label>{{ __('Process Level') }}</flux:label>
-            <flux:select name="process_level" required>
-                <option value="">Select Process Level</option>
-                @foreach ($processLevels as $level)
-                    <option value="{{ $level }}">{{ $level }}</option>
-                @endforeach
-            </flux:select>
-            <flux:input name="amount" :label="__('Amount (LKR)')" type="number" step="0.01" />
-
-            {{-- Customer (filtered by selected company) --}}
+            
+              {{-- Customer (filtered by selected company) --}}
             <flux:label>{{ __('Customer') }}</flux:label>
             <div x-data="customerSelect()" x-init="setCompanies(@js($companies))"
                  @company-changed.window="loadCustomers($event.detail)"
@@ -104,13 +94,23 @@
                     <div class="max-h-60 overflow-y-auto">
                         <template x-for="customer in filteredCustomers" :key="customer.id">
                             <div @click="selectCustomer(customer); open = false;"
-                                 class="p-2 cursor-pointer rounded-md text-black dark:text-black hover:bg-gray-100 dark:hover:bg-neutral-700"
+                                 class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700"
                                  x-text="customer.name"></div>
                         </template>
                     </div>
                 </div>
                 <input type="hidden" name="customer_id" :value="selectedCustomerId">
             </div>
+
+             {{-- Process Level --}}
+            <flux:label>{{ __('Process Level') }}</flux:label>
+            <flux:select name="process_level" required>
+                <option value="">Select Process Level</option>
+                @foreach ($processLevels as $level)
+                    <option value="{{ $level }}">{{ $level }}</option>
+                @endforeach
+            </flux:select>
+            <flux:input name="amount" :label="__('Amount (LKR)')" type="number" step="0.01" />
 
             {{-- Other Fields --}}
             <flux:textarea name="more_info" :label="__('More Information')" rows="3"></flux:textarea>

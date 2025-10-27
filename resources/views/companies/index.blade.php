@@ -27,7 +27,7 @@
                                 <input type="text" x-model="search" placeholder="Search companies..." class="w-full p-2 mb-2 border-gray-300 dark:border-neutral-600 rounded-md text-sm bg-gray-50 dark:bg-neutral-700">
                                 <div class="max-h-60 overflow-y-auto">
                                     <template x-for="option in filteredOptions" :key="option.id">
-                                        <div @click="select(option); open = false;" class="p-2 cursor-pointer rounded-md text-black dark:text-black hover:bg-gray-100 dark:hover:bg-neutral-700" x-text="option.name"></div>
+                                        <div @click="select(option); open = false;" class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700" x-text="option.name"></div>
                                     </template>
                                 </div>
                             </div>
@@ -48,7 +48,7 @@
                                     <input type="text" x-model="search" placeholder="Search industries..." class="w-full p-2 mb-2 border-gray-300 dark:border-neutral-600 rounded-md text-sm bg-gray-50 dark:bg-neutral-700">
                                     <div class="max-h-60 overflow-y-auto">
                                         <template x-for="option in filteredOptions" :key="option.id">
-                                            <div @click="select(option); open = false;" class="p-2 cursor-pointer rounded-md text-black dark:text-black hover:bg-gray-100 dark:hover:bg-neutral-700" x-text="option.name"></div>
+                                            <div @click="select(option); open = false;" class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700" x-text="option.name"></div>
                                         </template>
                                     </div>
                                 </div>

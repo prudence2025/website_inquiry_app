@@ -173,8 +173,10 @@ public function index(Request $request)
         $companies = Company::with('customers:id,name,company_id')
                         ->orderBy('created_at', 'desc')
                         ->get(['id', 'name']);
-        $requirementTypes = RequirementType::all(['id', 'name']);
-        $receivers = User::pluck('name');
+        $requirementTypes = RequirementType::orderBy('name')->get(['id', 'name']);
+        $receivers = User::where('id', '!=', 1)
+                   ->orderBy('name')
+                   ->pluck('name');
         $processLevels = [
             'Received',
             'Quoted',
@@ -231,8 +233,10 @@ public function edit(Inquiry $inquiry)
         $q->select('id', 'name', 'company_id');
     }])->get(['id', 'name']);
 
-    $requirementTypes = RequirementType::all(['name']); // we store names on inquiry
-    $receivers = User::pluck('name');
+    $requirementTypes = RequirementType::orderBy('name')->get(['id', 'name']);
+    $receivers = User::where('id', '!=', 1)
+                   ->orderBy('name')
+                   ->pluck('name');
     $processLevels = [
         'Received',
         'Quoted',

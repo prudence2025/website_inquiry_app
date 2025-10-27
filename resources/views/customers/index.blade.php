@@ -38,7 +38,7 @@
                                 {{-- Use max-h-40 for max 5 options with scroll --}}
                                 <div class="max-h-40 overflow-y-auto">
                                     <template x-for="option in filteredOptions" :key="option.id">
-                                        <div @click="select(option); open = false;" class="p-2 cursor-pointer rounded-md text-black hover:bg-gray-100 dark:hover:bg-neutral-700" x-text="option.name"></div>
+                                        <div @click="select(option); open = false;" class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700" x-text="option.name"></div>
                                     </template>
                                 </div>
                             </div>

@@ -57,6 +57,12 @@
                 <x-gmdi-layers class="inline w-4 h-4 me-2" width="16" height="16" />
                         {{ __('Industries') }}
                 </flux:navlist.item>
+                @if(auth()->id() === 1)
+                <flux:navlist.item :href="route('users.index')" :current="request()->routeIs('users.*')" wire:navigate>
+                    <x-gmdi-person class="inline w-4 h-4 me-2" width="16" height="16" />
+                    {{ __('Users') }}
+                </flux:navlist.item>
+                @endif
             </flux:navlist.group>
             </flux:navlist>
 
