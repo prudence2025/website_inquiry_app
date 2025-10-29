@@ -2,6 +2,10 @@
 
 A clean and modular Inquiry Management System built using Laravel, Blade, Tailwind, and Alpine.js, designed for efficient handling of company inquiries, customers, and industries — with dashboards, CSV import/export, and analytics.
 
+Credentials for admin
+admin@webinquries.lk
+pw- prudenceweb@123 (default pw - password)
+
 🚀 Features
 🗂️ Core Modules
 
@@ -106,7 +110,7 @@ php artisan migrate
 php artisan serve
 
 
-Access it at http://localhost:8000
+Access it at https://webinquiries.prudence.lk/
 
 📊 Dashboard Overview
 Controller

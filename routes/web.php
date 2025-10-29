@@ -39,7 +39,9 @@ Route::middleware(['auth'])->group(function () {
 
 // ✅ Application CRUD routes (protected)
 Route::middleware(['auth'])->group(function () {
-    Route::resource('users', UserController::class); 
+    Route::middleware(['auth', 'admin.only'])->group(function () {
+        Route::resource('users', UserController::class);
+    });
     Route::resource('companies', CompanyController::class);
     Route::resource('customers', CustomerController::class);
     Route::resource('industries', IndustryController::class);
