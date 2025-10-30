@@ -6,28 +6,9 @@
             @csrf
             @method('PUT')
 
-            <flux:label>
-            {{ __('Customer Name') }}<span class="text-red-500">*</span>
-            </flux:label>
-            <flux:input 
-                name="name" 
-                type="text" 
-                class="mt-2"
-                value="{{ old('name', $customer->name) }}" 
-                required 
-                autofocus 
-            />
-            <flux:input name="email" :label="__('Email')" type="email" value="{{ old('email', $customer->email) }}" />
-            <flux:input name="phone" :label="__('Phone')" type="text" value="{{ old('phone', $customer->phone) }}" />
-            <flux:input name="position" :label="__('Position')" type="text" value="{{ old('position', $customer->position) }}" />
-            <div>
-                <flux:label>{{ __('Notes') }}</flux:label>
-                <flux:textarea name="notes" rows="3">{{ old('notes', $customer->notes) }}</flux:textarea>
-            </div>
-            {{-- Single-select company dropdown --}}
             <flux:label>{{ __('Company') }}</flux:label>
             <div x-data="singleSelectSingle({ selectedId: @js($customer->company_id), options: @js($companies) })"
-                 @click.outside="open = false" class="relative">
+                 @click.outside="open = false" class="relative mt-1">
 
                 <div @click="open = !open"
                      class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md shadow-sm cursor-pointer min-h-[40px] 
@@ -63,6 +44,25 @@
                 </div>
 
                 <input type="hidden" name="company_id" :value="selectedId" x-model="selectedId">
+            </div>
+
+            <flux:label>
+            {{ __('Customer Name') }}<span class="text-red-500">*</span>
+            </flux:label>
+            <flux:input 
+                name="name" 
+                type="text" 
+                class="mt-2"
+                value="{{ old('name', $customer->name) }}" 
+                required 
+                autofocus 
+            />
+            <flux:input name="email" :label="__('Email')" type="email" value="{{ old('email', $customer->email) }}" />
+            <flux:input name="phone" :label="__('Phone')" type="text" value="{{ old('phone', $customer->phone) }}" />
+            <flux:input name="position" :label="__('Position')" type="text" value="{{ old('position', $customer->position) }}" />
+            <div>
+                <flux:label>{{ __('Notes') }}</flux:label>
+                <flux:textarea name="notes" class="mt-1" rows="3">{{ old('notes', $customer->notes) }}</flux:textarea>
             </div>
 
             <div class="flex justify-end pt-4 gap-3">

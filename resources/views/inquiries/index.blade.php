@@ -120,7 +120,7 @@
                     <th scope="col" class="px-6 py-3">{{ __('Requirement Type') }}</th>
                     <th scope="col" class="px-6 py-3">{{ __('Customer / Contact') }}</th>
                     <th scope="col" class="px-6 py-3">{{ __('Company') }}</th>
-                    <th scope="col" class="px-6 py-3">{{ __('Status') }}</th>
+                    <th scope="col" class="px-6 py-3 text-center">{{ __('Status') }}</th>
                     <th scope="col" class="px-6 py-3 w-[150px] text-center">{{ __('Actions') }}</th>
                 </tr>
             </thead>
@@ -134,7 +134,7 @@
                         
                         {{-- Date --}}
                         <td class="px-6 py-2 text-gray-900 dark:text-white">
-                            {{ \Carbon\Carbon::parse($inquiry->inquiry_date)->format('Y-m-d') }}
+                            {{ \Carbon\Carbon::parse($inquiry->inquiry_date)->format('Y/m/d') }}
                         </td>
 
                         {{-- Requirement Type --}}
@@ -165,7 +165,7 @@
                         </td>
                         
                         {{-- Status/Level (UPDATED COLOR LOGIC) --}}
-                        <td class="px-6 py-2 whitespace-nowrap">
+                        <td class="px-6 py-2 whitespace-nowrap text-center">
                             @php
                                 $status = $inquiry->process_level;
                                 $colorClasses = '';
