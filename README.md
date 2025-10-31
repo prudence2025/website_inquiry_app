@@ -1,220 +1,178 @@
-🧭 Inquiry Management System (Laravel 11 + Blade + Alpine.js)
-
-A clean and modular Inquiry Management System built using Laravel, Blade, Tailwind, and Alpine.js, designed for efficient handling of company inquiries, customers, and industries — with dashboards, CSV import/export, and analytics.
-
-Credentials for admin
-admin@webinquries.lk
-pw- prudenceweb@123 (default pw - password)
-
-🚀 Features
-🗂️ Core Modules
-
-Inquiries CRUD — Create, Edit, Delete, View inquiries with fields:
-
-Inquiry Date
-
-Receiver
-
-Requirement Type
-
-Industry, Company, Customer
-
-Process Level (Received, Quoted, Discussing, Settled, Dropped)
-
-Amount, Contact Info, Additional Notes
-
-Companies CRUD
-
-Customers CRUD
-
-Industries CRUD
-
-Requirement Types CRUD
-
-📊 Dashboard Analytics
-
-Interactive dashboard showing:
-
-Total inquiries, companies, customers
-
-Inquiries by status
-
-Received
-
-Quoted
-
-Discussing
-
-Settled
-
-Dropped
-
-Date-range based inquiries graph (using Chart.js)
-
-Adjustable date filters (From–To range) with Apply & Reset buttons
-
-Automatically updates without page reload (via Blade data binding)
-
-📈 CSV Import & Export
-
-Import inquiries with customer email and contact number.
-
-Export filtered inquiries to CSV directly from the Inquiry table view.
-
-💡 Inquiry Process Levels
-
-Standardized process_level statuses used throughout:
-
-Label	Description
-Received	Just received the inquiry
-Quoted	Quotation sent
-Discussing	Deal on Discussion
-Settled	Deal finished
-Dropped	Deal dropped
-🧱 Tech Stack
-Layer	Technology
-Backend	Laravel 11 (PHP 8+)
-Frontend	Blade Templates + Alpine.js + Tailwind CSS
-Database	MySQL
-Charts	Chart.js
-Authentication	Laravel Fortify
-Pagination	Laravel built-in pagination
-CSV Handling	Native Laravel Response Stream
-⚙️ Installation
-1️⃣ Clone the repository
-git clone https://github.com/yourusername/inquiry-management-system.git
-cd inquiry-management-system
-
-2️⃣ Install dependencies
-composer install
-npm install && npm run build
-
-3️⃣ Configure .env
-
-Set up your database and app configuration:
-
-cp .env.example .env
-php artisan key:generate
-
-
-Then update:
-
-DB_DATABASE=web_inquiry_v1
-DB_USERNAME=root
-DB_PASSWORD=
-
-4️⃣ Run migrations & seed
-php artisan migrate
-
-5️⃣ Serve the app
-php artisan serve
-
-
-Access it at https://webinquiries.prudence.lk/
-
-📊 Dashboard Overview
-Controller
-
-App\Http\Controllers\DashboardController
-
-Handles:
-
-index() → loads all metrics & chart data for the dashboard
-
-stats() → (optional AJAX endpoint) returns data in JSON if needed
-
-Metrics Displayed
-
-Total Inquiries
-
-Total Companies
-
-Total Customers
-
-Status breakdown (Received, Quoted, Discussing, Settled, Dropped)
-
-Inquiries within date range
-
-Line chart showing daily inquiries over time
-
-Blade Layout Example
-
-resources/views/dashboard.blade.php
-
-Uses Tailwind for layout
-
-Chart.js for visualizing daily inquiries
-
-Blade for totals, date filters, and chart data injection
-
-📄 Routes Summary
-Route	Controller	Description
-/	Redirects to Dashboard	Auth required
-/dashboard	DashboardController@index	Dashboard view & chart
-/dashboard/stats	DashboardController@stats	(Optional JSON endpoint)
-/inquiries	InquiryController	Full CRUD
-/companies	CompanyController	CRUD
-/customers	CustomerController	CRUD
-/industries	IndustryController	CRUD
-/requirement-types	RequirementTypeController	CRUD
-/settings/*	Volt/Fortify routes	Auth & profile settings
-🧾 Inquiry Table Pagination
-
-Pagination added via:
-
-$inquiries = Inquiry::with(['customer','company.industries'])->latest()->paginate(10);
-
-
-Blade pagination controls:
-
-<div class="mt-1 mx-auto px-6 mb-4">
-    {{ $inquiries->links() }}
-</div>
-
-
-Optional “Show All” link can be added:
-
-<a href="{{ route('inquiries.index', ['show_all' => true]) }}">Show All</a>
-
-🧩 CSV Import Fields
-
-When importing inquiries via CSV:
-
-Field	Description
-inquiry_date	Date of inquiry
-receiver_name	Person receiving inquiry
-requirement_type	Type of requirement
-industry_id	Industry (optional)
-company_id	Company (optional)
-customer_name	Customer name
-customer_email	Customer email
-contact_info	Customer contact number
-more_info	Additional notes
-amount	Estimated value
-process_level	Inquiry status
-🧰 Developer Notes
-
-All models use Eloquent relationships:
-
-Inquiry → belongsTo Company, Customer, Industry
-
-Company → hasMany Inquiries
-
-Customer → hasMany Inquiries
-
-Validation handled in controller store() and update() methods.
-
-Dynamic dropdowns (Company/Customer/Industry) implemented with Alpine.js searchable selects.
-
-Both Create & Edit forms share the same dropdown behavior.
-
-🧑‍💻 Maintainer
-
-Author: Yomindu Tharaka
-Role: PHP / Laravel Software Engineer
-Stack: Laravel, React, Node, MySQL, Tailwind, IoT Systems
-
-🏁 License
-
-This project is open-sourced under the MIT license.﻿# website_inquiry_app
-
+# 🧭 Inquiry Management System
+
+![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?style=for-the-badge&logo=laravel)
+![PHP](https://img.shields.io/badge/PHP-8.3%2B-777BB4?style=for-the-badge&logo=php)
+![Frontend](https://img.shields.io/badge/Alpine.js-Blade-0D9488?style=for-the-badge&logo=almalinux)
+![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)
+
+A clean and modular Inquiry Management System built with Laravel 11, Blade, and Alpine.js. Designed for efficient handling of company inquiries, customers, and industries—complete with a dynamic dashboard, CSV import/export, and analytics.
+
+
+
+---
+
+## 🚀 Key Features
+
+### 🗂️ Core CRUD Modules
+Full Create, Read, Update, and Delete functionality for all key business areas:
+* **Inquiries:** Track inquiries with status, amount, receiver, and linked entities.
+* **Companies:** Manage company profiles.
+* **Customers:** Manage customer contact information and history.
+* **Industries:** Categorize companies and inquiries.
+* **Requirement Types:** Define the types of services or products requested.
+
+### 📊 Dashboard & Analytics
+A dynamic, single-page dashboard to visualize key metrics:
+* At-a-glance totals for inquiries, companies, and customers.
+* Donut chart breaking down inquiries by their current status.
+* Interactive line chart (using **Chart.js**) showing inquiry volume over time.
+* Date-range filters (From/To) that update all dashboard widgets instantly without a page reload.
+
+### 📈 CSV Import & Export
+* **Import:** Bulk-import new inquiries from a CSV file.
+* **Export:** Export the current, filtered view of the inquiries table directly to a CSV.
+
+### 💡 Standardized Inquiry Pipeline
+Track an inquiry's lifecycle with standardized `process_level` statuses:
+
+| Label | Description |
+| :--- | :--- |
+| **Received** | Just received the inquiry |
+| **Quoted** | Quotation has been sent |
+| **Discussing** | The deal is under discussion |
+| **Settled** | The deal has been finalized and won |
+| **Dropped** | The deal has been lost or cancelled |
+
+---
+
+## 🧱 Tech Stack
+
+| Layer | Technology |
+| :--- | :--- |
+| **Backend** | Laravel 12 (PHP 8.3+) |
+| **Frontend** | Blade Templates, Alpine.js, Tailwind CSS |
+| **Database** | MySQL |
+| **Authentication** | Laravel Fortify |
+| **Charts** | Chart.js |
+| **Dev Tools** | Vite |
+
+---
+
+## ⚙️ Getting Started
+
+Follow these steps to get the project up and running on your local machine.
+
+### 1. Prerequisites
+* PHP 8.3+
+* Composer
+* Node.js & npm
+* A local database (e.g., MySQL)
+
+### 2. Installation
+1.  **Clone the repository:**
+    ```bash
+    git clone [https://github.com/yourusername/inquiry-management-system.git](https://github.com/yourusername/inquiry-management-system.git)
+    cd inquiry-management-system
+    ```
+
+2.  **Install dependencies:**
+    ```bash
+    composer install
+    npm install
+    ```
+
+3.  **Set up your environment:**
+    ```bash
+    cp .env.example .env
+    ```
+    Inside your new `.env` file, add your database credentials:
+    ```ini
+    DB_DATABASE=web_inquiry_v1
+    DB_USERNAME=root
+    DB_PASSWORD=your_password
+    ```
+
+4.  **Generate app key:**
+    ```bash
+    php artisan key:generate
+    ```
+
+5.  **Run migrations and seed the database:**
+    * The migration will create all necessary tables.
+    * The seeder will create a default admin user and sample data.
+    ```bash
+    php artisan migrate --seed
+    ```
+
+6.  **Build frontend assets in order    :**
+    ```bash
+    php artisan livewire:publish --assets
+    php artisan view:clear
+    php artisan route:clear
+    php artisan config:clear
+    php artisan cache:clear
+    php artisan optimize:clear
+    npm run build
+    php artisan optimize:clear
+    php artisan optimize
+    ```
+
+7.  **Serve the application:**
+    ```bash
+    php artisan serve
+    ```
+    Your application will be running at `http://127.0.0.1:8000`.
+
+---
+
+## 🔑 Usage & Admin Credentials
+
+After running the database seeder (`php artisan migrate --seed`), you can log in with the default administrator account:
+
+* **Email:** `admin@webinquries.lk`
+* **Password:** `password`
+
+> **Note:** It is strongly recommended to change this password immediately after your first login.
+
+---
+
+## 🧰 Technical Notes
+
+### CSV Import Fields
+When preparing a CSV for import, ensure it has the following columns:
+
+| Field | Description |
+| :--- | :--- |
+| `inquiry_date` | Date of inquiry (e.g., YYYY-MM-DD) |
+| `receiver_name` | Person receiving the inquiry |
+| `requirement_type` | Type of requirement |
+| `industry_id` | Industry ID (optional) |
+| `company_id` | Company ID (optional) |
+| `customer_name` | Customer's full name |
+| `customer_email` | Customer's email address |
+| `contact_info` | Customer's contact number |
+| `more_info` | Additional notes (optional) |
+| `amount` | Estimated value of the deal |
+| `process_level` | Inquiry status (e.g., Received, Quoted) |
+
+### Eloquent Relationships
+* `Inquiry` → `belongsTo` (Company, Customer, Industry)
+* `Company` → `hasMany` (Inquiries)
+* `Customer` → `hasMany` (Inquiries)
+
+### Authentication
+User authentication, registration, and password reset are handled by **Laravel Fortify**. Profile settings are managed by **Laravel Jetstream/Volt**.
+
+---
+
+## 🧑‍💻 Maintainer
+
+* **Author:** Yomindu Tharaka
+* **Role:**  Software Engineer
+* **Stack:** Laravel, React, Node, MySQL, Tailwind, IoT Systems
+
+---
+
+## 🏁 License
+
+This project is open-sourced under the **MIT License**.
