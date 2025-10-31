@@ -71,7 +71,7 @@ Follow these steps to get the project up and running on your local machine.
 ### 2. Installation
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/yourusername/inquiry-management-system.git](https://github.com/yourusername/inquiry-management-system.git)
+    git clone [https://github.com/yourusername/inquiry-management-system.git](https://github.com/prudence2025/website_inquiry_app.git)
     cd inquiry-management-system
     ```
 
@@ -176,4 +176,5 @@ User authentication, registration, and password reset are handled by **Laravel F
 ## 🏁 License
 
 This project is open-sourced under the **MIT License**.
+
 
