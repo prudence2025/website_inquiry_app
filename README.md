@@ -5,7 +5,7 @@
 ![Frontend](https://img.shields.io/badge/Alpine.js-Blade-0D9488?style=for-the-badge&logo=almalinux)
 ![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)
 
-A clean and modular Inquiry Management System built with Laravel 11, Blade, and Alpine.js. Designed for efficient handling of company inquiries, customers, and industries—complete with a dynamic dashboard, CSV import/export, and analytics.
+A clean and modular Inquiry Management System built with Laravel 12, Blade, and Alpine.js. Designed for efficient handling of company inquiries, customers, and industries—complete with a dynamic dashboard, CSV import/export, and analytics.
 
 
 
@@ -176,3 +176,4 @@ User authentication, registration, and password reset are handled by **Laravel F
 ## 🏁 License
 
 This project is open-sourced under the **MIT License**.
+
