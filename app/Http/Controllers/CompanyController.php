@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Company;
 use App\Models\Industry;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule; // Import the Rule class
+use Illuminate\Validation\Rule;
+use Illuminate\Http\JsonResponse;
 
 class CompanyController extends Controller
 {
@@ -100,4 +101,25 @@ public function index(Request $request)
 
         return redirect()->route('companies.index')->with('success', 'Company deleted successfully!');
     }
+
+    public function ajaxStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:companies,name',
+            'industry_id' => 'required|exists:industries,id',
+        ]);
+
+        $company = Company::create(['name' => $validated['name']]);
+        $company->industries()->attach($validated['industry_id']);
+
+        return response()->json([
+            'success' => true,
+            'company' => [
+                'id' => $company->id,
+                'name' => $company->name,
+                'customers' => []
+            ]
+        ], 201);
+    }
+
 }

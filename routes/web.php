@@ -47,6 +47,13 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('industries', IndustryController::class);
     Route::resource('inquiries', InquiryController::class);
     Route::resource('requirement-types', RequirementTypeController::class);
+
+    // AJAX endpoints
+    Route::post('/ajax/companies', [\App\Http\Controllers\CompanyController::class, 'ajaxStore'])
+        ->name('companies.ajaxStore');
+
+    Route::post('/ajax/customers', [\App\Http\Controllers\CustomerController::class, 'ajaxStore'])
+        ->name('customers.ajaxStore');
 });
 
 require __DIR__.'/auth.php';

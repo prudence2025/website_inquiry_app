@@ -207,24 +207,80 @@ public function index(Request $request)
 
 
 
-    public function store(Request $request)
-    {   
-        //dd($request->all());
-        $validated = $request->validate([
-            'inquiry_date' => 'required|date',
-            'receiver_name' => 'required|string|max:255',
-            'requirement_type' => 'required|string|max:255',
-            'company_id' => 'nullable|exists:companies,id',
-            'customer_id' => 'nullable|exists:customers,id',
-            'more_info' => 'nullable|string',
-            'amount' => 'nullable|numeric',
-            'process_level' => 'required|string|max:255',
+public function store(Request $request)
+{
+    // if frontend provided a new company, create it first
+    $companyId = $request->input('company_id');
+
+    if ($request->filled('new_company_name')) {
+        $request->validate([
+            'new_company_name' => 'required|string|max:255',
+            'new_industry_id' => 'required|exists:industries,id',
         ]);
 
-        Inquiry::create($validated);
+        $company = \App\Models\Company::create([
+            'name' => $request->input('new_company_name'),
+        ]);
 
-        return redirect()->route('inquiries.index')->with('success', 'Inquiry added successfully!');
+        // attach industry (company_industry pivot)
+        $company->industries()->attach($request->input('new_industry_id'));
+
+        $companyId = $company->id;
     }
+
+    // if frontend provided a new customer, create it
+    $customerId = $request->input('customer_id');
+    if ($request->filled('new_customer_name')) {
+        $request->validate([
+            'new_customer_name' => 'required|string|max:255',
+            // email/phone are optional
+            'new_customer_email' => 'nullable|email',
+            'new_customer_phone' => 'nullable|string|max:20',
+        ]);
+
+        // must have a company id to attach to
+        if (! $companyId) {
+            return back()->withInput()->with('error', 'Please select or create a company for the new customer.');
+        }
+
+        $customer = \App\Models\Customer::create([
+            'company_id' => $companyId,
+            'name' => $request->input('new_customer_name'),
+            'email' => $request->input('new_customer_email'),
+            'phone' => $request->input('new_customer_phone'),
+            'position' => $request->input('new_customer_position'),
+            'notes' => $request->input('new_customer_notes'),
+        ]);
+
+        $customerId = $customer->id;
+    }
+
+    // now validate inquiry fields (use the resolved $companyId and $customerId)
+    $validated = $request->validate([
+        'inquiry_date' => 'required|date',
+        'receiver_name' => 'required|string|max:255',
+        'requirement_type' => 'required|string|max:255',
+        'company_id' => 'nullable|exists:companies,id',
+        'customer_id' => 'nullable|exists:customers,id',
+        'more_info' => 'nullable|string',
+        'amount' => 'nullable|numeric',
+        'process_level' => 'required|string|max:255',
+    ]);
+
+    // override with resolved IDs if present
+    if ($companyId) {
+        $validated['company_id'] = $companyId;
+    }
+    if ($customerId) {
+        $validated['customer_id'] = $customerId;
+    }
+
+    Inquiry::create($validated);
+
+    return redirect()->route('inquiries.index')->with('success', 'Inquiry added successfully!');
+}
+
+
 
 public function edit(Inquiry $inquiry)
 {
