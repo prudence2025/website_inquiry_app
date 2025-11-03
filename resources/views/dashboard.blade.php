@@ -52,27 +52,37 @@
         {{-- BOTTOM SECTION: Chart --}}
         <div class="relative h-full flex-1 overflow-hidden rounded-xl border p-4 flex flex-col">
 
-            {{-- Date range form --}}
+           {{-- Date range form --}}
             <form method="GET" action="{{ route('dashboard') }}" class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-                <div class="flex items-center gap-3">
-                    <label class="text-sm">From</label>
-                    <input type="date" name="from" value="{{ $from }}" class="form-input rounded-md" />
-                    <label class="text-sm">To</label>
-                    <input type="date" name="to" value="{{ $to }}" class="form-input rounded-md" />
-                    <button type="submit"
-                        class="ml-2 inline-flex items-center rounded-md px-3 py-1 text-sm font-semibold hover:bg-indigo-700">
-                        Apply
-                    </button>
-                    <a href="{{ route('dashboard') }}"
-                        class="ml-2 inline-flex items-center rounded-md px-3 py-1 text-sm font-semibold">
-                        Reset
-                    </a>
+                <div class="flex flex-wrap items-center gap-3">
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">From</label>
+                    <input type="date" name="from" value="{{ $from }}" 
+                           class="rounded-md border-gray-300 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 text-sm px-2 py-1 focus:ring-2 focus:ring-indigo-500" />
+
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">To</label>
+                    <input type="date" name="to" value="{{ $to }}" 
+                           class="rounded-md border-gray-300 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 text-sm px-2 py-1 focus:ring-2 focus:ring-indigo-500" />
+
+                    {{-- Flex buttons --}}
+                    <div class="flex items-center gap-2 ml-2">
+                        <button type="submit"
+                            class="text-blue-500 hover:bg-blue-100 dark:hover:bg-blue-900/30 border border-blue-600 text-xs font-medium rounded-md px-3 py-1.5 transition">
+                            Apply
+                        </button>
+
+                        <a href="{{ route('dashboard') }}"
+                            class="text-red-500 hover:bg-red-100 dark:hover:bg-red-900/30 border border-red-400 text-xs font-medium rounded-md px-3 py-1.5 transition">
+                            Reset
+                        </a>
+                    </div>
+
                 </div>
 
-                <div class="text-sm">
-                    Showing results from {{ $from }} to {{ $to }}.
+                <div class="text-sm text-gray-600 dark:text-gray-400">
+                    Showing results from <strong>{{ $from }}</strong> to <strong>{{ $to }}</strong>.
                 </div>
             </form>
+
 
             {{-- Chart --}}
             <div x-data="dashboardChart()" x-init="initChart()" class="flex-1 h-full">
@@ -120,7 +130,7 @@
                     }
 
                     try {
-                        // Verify Chart.js is loaded
+                        // Verify Chart.js  loaded
                         if (typeof Chart === 'undefined') {
                             errorMsg = 'Chart.js not loaded. Retrying...';
                             // Retry once after 1s

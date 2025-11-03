@@ -32,7 +32,7 @@
                     <button x-show="selectedRequirementName" type="button" @click.stop="clearRequirement()" class="ml-auto text-gray-400">&times;</button>
                 </div>
 
-                <div x-show="openRequirement" x-cloak class="absolute z-10 w-full mt-1 p-2 rounded-lg bg-white dark:bg-neutral-900 border">
+                <div x-show="openRequirement" x-cloak class="absolute z-10 w-full mt-2 p-2 rounded-lg bg-white dark:bg-neutral-900 border">
                     <input type="text" x-model="requirementSearch" placeholder="Search..." class="w-full p-2 mb-2 border rounded text-sm">
                     <div class="max-h-60 overflow-y-auto">
                         <template x-for="opt in filteredRequirementTypes" :key="opt.id">
@@ -46,14 +46,14 @@
 
             {{-- Company --}}
             <flux:label>{{ __('Company') }}</flux:label>
-            <div class="flex items-center gap-2 mb-3">
+            <div class="flex items-center gap-2 mb-4">
                 <div class="relative flex-1">
                     <div @click="toggleCompanyDropdown()" class="flex items-center w-full p-2 border rounded-md cursor-pointer min-h-[40px]">
                         <span x-text="selectedCompanyName || 'Select a company...'"></span>
                         <button x-show="selectedCompanyId" type="button" @click.stop="clearCompany()" class="ml-auto text-gray-400">&times;</button>
                     </div>
 
-                    <div x-show="openCompany" x-cloak class="absolute z-10 w-full mt-1 p-2 rounded-lg bg-white dark:bg-neutral-900 border">
+                    <div x-show="openCompany" x-cloak class="absolute z-10 w-full mt-2 p-2 rounded-lg bg-white dark:bg-neutral-900 border">
                         <input type="text" x-model="companySearch" placeholder="Search companies..." class="w-full p-2 mb-2 border rounded text-sm">
                         <div class="max-h-60 overflow-y-auto">
                             <template x-for="c in filteredCompanies" :key="c.id">
@@ -91,7 +91,7 @@
                             <input type="text"
                                    x-model="industrySearch"
                                    placeholder="Search industry..."
-                                   class="w-full p-2 mb-2 border rounded text-sm">
+                                   class="w-full p-2 mb-3 border rounded text-sm">
                     
                             <div class="max-h-60 overflow-y-auto">
                                 <template
@@ -120,7 +120,7 @@
 
             {{-- Customer --}}
             <flux:label>{{ __('Customer') }}</flux:label>
-            <div class="flex items-center gap-2 mb-3">
+            <div class="flex items-center gap-2 mb-4">
                 <div class="relative flex-1">
                     <div @click="toggleCustomerDropdown()" class="flex items-center w-full p-2 border rounded-md cursor-pointer min-h-[40px]">
                         <span x-text="selectedCustomerName || 'Select a customer...'"></span>
@@ -163,8 +163,6 @@
                                 </template>
                             </div>
                         </div>
-
-                        <!-- <input type="hidden" name="company_id" :value="newCustomer.company_id"> -->
                     </div>
 
                         <input type="text" x-model="newCustomer.name" placeholder="Full name" class="w-full p-2 border rounded">

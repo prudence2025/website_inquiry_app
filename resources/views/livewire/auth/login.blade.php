@@ -112,7 +112,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
     <x-auth-session-status class="text-center" :status="session('status')" />
 
     <form method="POST" wire:submit="login" class="flex flex-col gap-6">
-        @csrf <!-- IMPORTANT: CSRF token -->
+        @csrf <!-- IMPORTANT: CSRF -->
     
         <!-- Email Address -->
         <flux:input
@@ -152,6 +152,17 @@ new #[Layout('components.layouts.auth')] class extends Component {
                 {{ __('Log in') }}
             </flux:button>
         </div>
+        <div class="text-center mt-4 text-[10px] text-zinc-500 dark:text-zinc-400 leading-relaxed space-y-1">
+            <p>&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
+            <p>
+                Design and developed by 
+                <a href="https://prudenceeng.lk/" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline">
+                    Prudence Engineering
+                </a>.
+            </p>
+        </div>
+
+
     </form>
 
     @if (Route::has('register'))
