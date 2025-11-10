@@ -62,4 +62,20 @@ class IndustryController extends Controller
 
         return redirect()->route('industries.index')->with('success', 'Industry deleted successfully!');
     }
+
+    public function ajaxStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:industries,name',
+        ]);
+    
+        $industry = Industry::create($validated);
+    
+        return response()->json([
+            'success' => true,
+            'industry' => $industry,
+            'message' => 'Industry created successfully!',
+        ]);
+    }
+
 }
