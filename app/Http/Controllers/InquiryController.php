@@ -312,7 +312,7 @@ public function edit(Inquiry $inquiry)
 
 
 public function update(Request $request, Inquiry $inquiry)
-{ 
+{
     $validated = $request->validate([
         'inquiry_date' => 'required|date',
         'receiver_name' => 'required|string|max:255',
@@ -324,10 +324,17 @@ public function update(Request $request, Inquiry $inquiry)
         'process_level' => 'required|string|max:255',
     ]);
 
+    if ($request->input('process_level') === 'Settled' && empty($request->input('amount'))) {
+        return back()
+            ->withInput()
+            ->withErrors(['amount' => 'You must enter an amount before setting the inquiry to Settled.']);
+    }
+
     $inquiry->update($validated);
 
     return redirect()->route('inquiries.index')->with('success', 'Inquiry updated successfully!');
 }
+
 
     public function destroy(Inquiry $inquiry)
     {

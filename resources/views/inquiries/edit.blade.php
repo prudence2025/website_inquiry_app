@@ -52,7 +52,7 @@
             </div>
 
             {{-- Company (searchable single select) --}}
-            <flux:label>{{ __('Company') }}</flux:label>
+            <flux:label>{{ __('Company') }}<span class="text-red-500">*</span></flux:label>
             <div x-data="companySelect({
                          companies: @js($companies),
                          selectedId: @js(old('company_id', $inquiry->company_id))
@@ -81,7 +81,7 @@
             </div>
 
             {{-- Customer (filtered by selected company) --}}
-            <flux:label>{{ __('Customer') }}</flux:label>
+            <flux:label>{{ __('Customer') }}<span class="text-red-500">*</span></flux:label>
             <div x-data="customerSelect({
                          companies: @js($companies),
                          selectedCompanyId: @js(old('company_id', $inquiry->company_id)),
@@ -118,7 +118,7 @@
             </div>
 
             {{-- Process Level --}}
-            <flux:label>{{ __('Process Level') }}</flux:label>
+            <flux:label>{{ __('Process Level') }}<span class="text-red-500">*</span></flux:label>
             <flux:select name="process_level" required>
                 <option value="">{{ __('Select Process Level') }}</option>
                 @foreach ($processLevels as $level)

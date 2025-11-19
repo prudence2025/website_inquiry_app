@@ -6,7 +6,7 @@
             @csrf
             @method('PUT')
 
-            <flux:label>{{ __('Company') }}</flux:label>
+            <flux:label>{{ __('Company') }}<span class="text-red-500">*</span></flux:label>
             <div x-data="singleSelectSingle({ selectedId: @js($customer->company_id), options: @js($companies) })"
                  @click.outside="open = false" class="relative mt-1">
 

@@ -46,7 +46,7 @@
             </div>
 
             {{-- Company --}}
-            <flux:label>{{ __('Company') }}</flux:label>
+            <flux:label>{{ __('Company') }}<span class="text-red-500">*</span></flux:label>
             <div class="flex items-center gap-2 mb-4">
                 <div class="relative flex-1" @click.outside="openCompany = false">
                     <div @click="openCompany = !openCompany" class="flex items-center w-full p-2 border rounded-md cursor-pointer min-h-[40px]">
@@ -70,7 +70,7 @@
             </div>
 
             {{-- Company Modal --}}
-            <div x-show="showCompanyModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center">
+           <div x-show="showCompanyModal" x-cloak class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto pt-10">
                 <div class="fixed inset-0 bg-black/30 backdrop-blur-sm" @click="closeCompanyModal()"></div>
                 <div class="relative bg-white dark:bg-neutral-900 rounded-lg p-6 w-full max-w-md" @click.stop>
                     <h3 class="text-lg font-semibold mb-3">Add Company</h3>
@@ -120,7 +120,7 @@
             </div>
 
             {{-- Customer --}}
-            <flux:label>{{ __('Customer') }}</flux:label>
+            <flux:label>{{ __('Customer') }}<span class="text-red-500">*</span></flux:label>
             <div class="flex items-center gap-2 mb-4">
                 <div class="relative flex-1" @click.outside="openCustomer = false">
                     <div @click="openCustomer = !openCustomer" class="flex items-center w-full p-2 border rounded-md cursor-pointer min-h-[40px]">
@@ -182,7 +182,7 @@
             </div>
 
             {{-- Process Level --}}
-            <flux:label>{{ __('Process Level') }}</flux:label>
+            <flux:label>{{ __('Process Level') }}<span class="text-red-500">*</span></flux:label>
             <flux:select name="process_level" required>
                 <option value="">{{ __('Select Process Level') }}</option>
                 <template x-for="lvl in processLevels" :key="lvl">

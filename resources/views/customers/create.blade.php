@@ -6,7 +6,7 @@
 
         <form action="{{ route('customers.store') }}" method="POST" class="space-y-6">
             @csrf
-            <flux:label>{{ __('Company') }}</flux:label>
+            <flux:label>{{ __('Company') }}<span class="text-red-500">*</span></flux:label>
             <div x-data="singleSelectSingle({ selectedId: null, options: @js($companies) })"
                  @click.outside="open = false" class="relative mt-1">
 
