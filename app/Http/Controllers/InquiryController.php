@@ -49,6 +49,7 @@ public function index(Request $request)
     // Load filter dropdown data
     $companies = Company::select('id', 'name')->get();
     $requirementTypes = RequirementType::select('name')->get()->unique('name')->values();
+    $receivers = Inquiry::select('receiver_name')->distinct()->orderBy('receiver_name')->pluck('receiver_name');
     $processLevels = [
         'Received',
         'Quoted',
@@ -60,6 +61,7 @@ public function index(Request $request)
     // Convert to plain arrays for Alpine <=> @js()
     $allCompanies = $companies->map(fn($c) => ['id' => $c->id, 'name' => $c->name])->values();
     $allRequirementTypes = $requirementTypes->map(fn($r) => ['id' => $r->name, 'name' => $r->name])->values();
+    $allReceivers = $receivers->map(fn($r) => ['id' => $r, 'name' => $r])->values();
 
     // Base query
     $query = Inquiry::with(['customer', 'company.industries'])->latest();
@@ -73,6 +75,9 @@ public function index(Request $request)
     }
     if ($request->filled('requirement_type')) {
         $query->where('requirement_type', $request->requirement_type);
+    }
+    if ($request->filled('receiver_name')) {
+        $query->where('receiver_name', $request->receiver_name);
     }
     if ($request->filled('process_level')) {
         $query->where('process_level', $request->process_level);
@@ -94,6 +99,7 @@ public function index(Request $request)
         'inquiries',
         'allCompanies',
         'allRequirementTypes',
+        'allReceivers',
         'processLevels'
     ));
 }

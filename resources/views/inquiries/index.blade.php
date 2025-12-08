@@ -54,6 +54,34 @@
                         <input type="hidden" name="requirement_type" :value="selectedName">
                     </div>
                 </div>
+
+                {{-- Receiver --}}
+                <div>
+                    <flux:label>{{ __('Receiver') }}</flux:label>
+                    <div x-data="singleSelect({ selectedId: @js(request('receiver_name')), options: @js($allReceivers) })"
+                         @click.outside="open = false" class="relative mt-1">
+                        <div @click="open = !open"
+                             class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md cursor-pointer min-h-[40px]">
+                            <span x-text="selectedName || 'All Receivers'"></span>
+                            <button x-show="selectedId" type="button" @click.stop="clearSelection()"
+                                    class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
+                        </div>
+                        <div x-show="open" x-transition.origin.top.left
+                             class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700"
+                             style="display:none;">
+                            <input type="text" x-model="search" placeholder="Search receivers..."
+                                   class="w-full p-2 mb-2 border-gray-300 rounded-md text-sm dark:bg-neutral-700 dark:text-gray-200">
+                            <div class="max-h-60 overflow-y-auto">
+                                <template x-for="option in filteredOptions" :key="option.id">
+                                    <div @click="select(option); open=false;"
+                                         class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700"
+                                         x-text="option.name"></div>
+                                </template>
+                            </div>
+                        </div>
+                        <input type="hidden" name="receiver_name" :value="selectedName">
+                    </div>
+                </div>
     
                 {{-- Company --}}
                 <div>
