@@ -55,21 +55,21 @@
                     </div>
                 </div>
 
-                {{-- Receiver --}}
+                {{-- Assign To --}}
                 <div>
-                    <flux:label>{{ __('Receiver') }}</flux:label>
+                    <flux:label>{{ __('Assign To') }}</flux:label>
                     <div x-data="singleSelect({ selectedId: @js(request('receiver_name')), options: @js($allReceivers) })"
                          @click.outside="open = false" class="relative mt-1">
                         <div @click="open = !open"
                              class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md cursor-pointer min-h-[40px]">
-                            <span x-text="selectedName || 'All Receivers'"></span>
+                            <span x-text="selectedName || 'All Assign To'"></span>
                             <button x-show="selectedId" type="button" @click.stop="clearSelection()"
                                     class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
                         </div>
                         <div x-show="open" x-transition.origin.top.left
                              class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700"
                              style="display:none;">
-                            <input type="text" x-model="search" placeholder="Search receivers..."
+                            <input type="text" x-model="search" placeholder="Search assign to..."
                                    class="w-full p-2 mb-2 border-gray-300 rounded-md text-sm dark:bg-neutral-700 dark:text-gray-200">
                             <div class="max-h-60 overflow-y-auto">
                                 <template x-for="option in filteredOptions" :key="option.id">
@@ -261,7 +261,7 @@
                                 </template>
                             </div>
             
-                            <p><span class="font-semibold text-gray-600 dark:text-gray-300">Receiver:</span><br> 
+                            <p><span class="font-semibold text-gray-600 dark:text-gray-300">Assign To:</span><br> 
                                 <span x-text="selectedInquiry.receiver"></span>
                             </p>
                             <p><span class="font-semibold text-gray-600 dark:text-gray-300">Requirement Type:</span><br> 

@@ -16,10 +16,10 @@
             {{-- Inquiry Date --}}
             <flux:input name="inquiry_date" :label="__('Inquiry Date')" type="date" required />
 
-            {{-- Receiver --}}
-            <flux:label>{{ __('Inquiry Receiver') }}<span class="text-red-500">*</span></flux:label>
+            {{-- Assign To --}}
+            <flux:label>{{ __('Assign To') }}<span class="text-red-500">*</span></flux:label>
             <flux:select name="receiver_name" required>
-                <option value="">{{ __('Select Receiver') }}</option>
+                <option value="">{{ __('Select Assign To') }}</option>
                 @foreach ($receivers as $receiver)
                     <option value="{{ $receiver }}">{{ $receiver }}</option>
                 @endforeach

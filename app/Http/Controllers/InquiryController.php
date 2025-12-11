@@ -131,7 +131,7 @@ public function index(Request $request)
             'ID',
             'Date',
             'Requirement Type',
-            'Receiver',
+            'Assign To',
             'Company',
             'Industry',
             'Customer Name',
