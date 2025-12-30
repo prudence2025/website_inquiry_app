@@ -202,7 +202,12 @@
                                 },
                                 scales: {
                                     x: { display: true },
-                                    y: { beginAtZero: true }
+                                    y: { 
+                                        beginAtZero: true,
+                                        ticks: {
+                                            stepSize: 1
+                                        }
+                                    }
                                 },
                                 plugins: {
                                     legend: { display: false },
