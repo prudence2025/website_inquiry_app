@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
 
 class CompanyController extends Controller
 {
-public function index(Request $request)
+    public function index(Request $request)
     {
         // Start a query builder instance
         $query = Company::with('industries')->latest();
@@ -27,12 +27,12 @@ public function index(Request $request)
             });
         }
 
-         // If "show=all" is in the URL, get all records
+        // If "show=all" is in the URL, get all records
         if ($request->input('show') === 'all') {
             $companies = $query->get();
         } else {
             // Otherwise paginate (10 per page)
-            $companies =  $query->paginate(10)->appends($request->query());
+            $companies = $query->paginate(10)->appends($request->query());
         }
 
         // Get data for the filter dropdowns
@@ -55,12 +55,18 @@ public function index(Request $request)
             // Add the 'unique' rule to the 'name' field
             'name' => 'required|string|max:255|unique:companies,name',
             'industry_id' => 'required|exists:industries,id',
+            'factory_location' => 'nullable|string|max:255',
+            'office_location' => 'nullable|string|max:255',
         ]);
-    
-        $company = Company::create(['name' => $validated['name']]);
-    
+
+        $company = Company::create([
+            'name' => $validated['name'],
+            'factory_location' => $validated['factory_location'] ?? null,
+            'office_location' => $validated['office_location'] ?? null,
+        ]);
+
         $company->industries()->attach($validated['industry_id']);
-    
+
         return redirect()->route('companies.index')->with('success', 'Company created successfully!');
     }
 
@@ -84,9 +90,15 @@ public function index(Request $request)
             ],
             // Kept validation consistent with the store method
             'industry_id' => 'required|exists:industries,id',
+            'factory_location' => 'nullable|string|max:255',
+            'office_location' => 'nullable|string|max:255',
         ]);
 
-        $company->update(['name' => $validated['name']]);
+        $company->update([
+            'name' => $validated['name'],
+            'factory_location' => $validated['factory_location'] ?? null,
+            'office_location' => $validated['office_location'] ?? null,
+        ]);
 
         // Sync the single industry
         $company->industries()->sync([$validated['industry_id']]);
@@ -107,9 +119,15 @@ public function index(Request $request)
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:companies,name',
             'industry_id' => 'required|exists:industries,id',
+            'factory_location' => 'nullable|string|max:255',
+            'office_location' => 'nullable|string|max:255',
         ]);
 
-        $company = Company::create(['name' => $validated['name']]);
+        $company = Company::create([
+            'name' => $validated['name'],
+            'factory_location' => $validated['factory_location'] ?? null,
+            'office_location' => $validated['office_location'] ?? null,
+        ]);
         $company->industries()->attach($validated['industry_id']);
 
         return response()->json([

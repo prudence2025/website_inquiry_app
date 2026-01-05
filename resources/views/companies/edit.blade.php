@@ -13,15 +13,33 @@
                 <flux:label>
                     {{ __('Company Name') }}<span class="text-red-500">*</span>
                 </flux:label>
-                <flux:input 
-                    name="name" 
-                    type="text"
-                    class="mt-2" 
-                    value="{{ old('name', $company->name) }}" 
-                    required 
-                    autofocus 
-                />
+                <flux:input name="name" type="text" class="mt-2" value="{{ old('name', $company->name) }}" required
+                    autofocus />
                 @error('name')
+                    <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- Factory Location --}}
+            <div>
+                <flux:label>
+                    {{ __('Factory Location') }}
+                </flux:label>
+                <flux:input name="factory_location" type="text" class="mt-2"
+                    value="{{ old('factory_location', $company->factory_location) }}" />
+                @error('factory_location')
+                    <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- Office Location --}}
+            <div>
+                <flux:label>
+                    {{ __('Office Location') }}
+                </flux:label>
+                <flux:input name="office_location" type="text" class="mt-2"
+                    value="{{ old('office_location', $company->office_location) }}" />
+                @error('office_location')
                     <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
                 @enderror
             </div>
@@ -32,36 +50,35 @@
                 <div x-data="singleSelect({
                                  selectedId: @js(old('industry_id', $selectedIndustry)),
                                  options: @js($industries)
-                             })"
-                     @click.outside="open = false"
-                     class="relative mt-2">
+                             })" @click.outside="open = false" class="relative mt-2">
 
                     {{-- Display Field --}}
                     <div @click="open = !open"
-                         class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md cursor-pointer min-h-[40px]">
+                        class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md cursor-pointer min-h-[40px]">
                         <span x-text="selectedName || 'Select an industry...'"></span>
                         <button x-show="selectedId" type="button" @click.stop="clearSelection()"
-                                class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
+                            class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
                     </div>
 
                     {{-- Dropdown Panel --}}
                     <div x-show="open" x-transition.origin.top.left
-                         class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700"
-                         style="display: none;">
+                        class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700"
+                        style="display: none;">
 
                         {{-- Search --}}
                         <input type="text" x-model="search" placeholder="Search industries..."
-                               class="w-full p-2 mb-2 border-gray-300 dark:border-neutral-600 rounded-md text-sm bg-gray-50 dark:bg-neutral-700">
+                            class="w-full p-2 mb-2 border-gray-300 dark:border-neutral-600 rounded-md text-sm bg-gray-50 dark:bg-neutral-700">
 
                         {{-- Options --}}
                         <div class="max-h-60 overflow-y-auto">
                             <template x-for="option in filteredOptions" :key="option.id">
                                 <div @click="select(option); open = false;"
-                                     class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700">
+                                    class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700">
                                     <span x-text="option.name"></span>
                                 </div>
                             </template>
-                            <p x-show="filteredOptions.length === 0" class="p-2 text-center text-gray-500 dark:text-gray-400 text-sm">
+                            <p x-show="filteredOptions.length === 0"
+                                class="p-2 text-center text-gray-500 dark:text-gray-400 text-sm">
                                 No results found.
                             </p>
                         </div>
@@ -69,7 +86,7 @@
 
                     {{-- Hidden Input for Submission --}}
                     <input type="hidden" name="industry_id" :value="selectedId">
-                    
+
                     {{-- Display Laravel Validation Error --}}
                     @error('industry_id')
                         <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
@@ -97,23 +114,23 @@
             search: '',
             selectedId: config.selectedId || null,
             options: config.options || [],
-            
+
             get selectedName() {
                 if (!this.selectedId) return null;
                 const selected = this.options.find(o => o.id == this.selectedId);
                 return selected ? selected.name : null;
             },
-            
+
             get filteredOptions() {
                 if (this.search === '') return this.options;
                 const term = this.search.toLowerCase();
                 return this.options.filter(opt => opt.name.toLowerCase().includes(term));
             },
-            
+
             select(option) {
                 this.selectedId = option.id;
             },
-            
+
             clearSelection() {
                 this.selectedId = null;
             }

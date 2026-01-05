@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\RequirementType;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Carbon\Carbon;
 
 class InquiryController extends Controller
 {
@@ -222,10 +223,14 @@ class InquiryController extends Controller
             $request->validate([
                 'new_company_name' => 'required|string|max:255',
                 'new_industry_id' => 'required|exists:industries,id',
+                'new_factory_location' => 'nullable|string|max:255',
+                'new_office_location' => 'nullable|string|max:255',
             ]);
 
             $company = \App\Models\Company::create([
                 'name' => $request->input('new_company_name'),
+                'factory_location' => $request->input('new_factory_location'),
+                'office_location' => $request->input('new_office_location'),
             ]);
 
             // attach industry (company_industry pivot)

@@ -25,6 +25,36 @@
                 @enderror
             </div>
 
+            {{-- Factory Location --}}
+            <div>
+                <flux:label>
+                    {{ __('Factory Location') }}
+                </flux:label>
+                <flux:input 
+                    name="factory_location" 
+                    type="text"
+                    class="mt-2"
+                />
+                @error('factory_location')
+                    <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- Office Location --}}
+            <div>
+                <flux:label>
+                    {{ __('Office Location') }}
+                </flux:label>
+                <flux:input 
+                    name="office_location" 
+                    type="text"
+                    class="mt-2"
+                />
+                @error('office_location')
+                    <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
             {{-- Industry Dropdown --}}
             <div>
                 <flux:label>{{ __('Industry') }}<span class="text-red-500">*</span></flux:label>

@@ -17,6 +17,8 @@ class Company extends Model
         'website',
         'contact_person',
         'description',
+        'factory_location',
+        'office_location',
     ];
 
     public function customers()

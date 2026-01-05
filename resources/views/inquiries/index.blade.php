@@ -163,6 +163,8 @@
                             type: '{{ $inquiry->requirement_type }}',
                             receiver: '{{ $inquiry->receiver_name }}',
                             company: '{{ $inquiry->company->name ?? 'N/A' }}',
+                            factory_location: '{{ $inquiry->company->factory_location ?? '-' }}',
+                            office_location: '{{ $inquiry->company->office_location ?? '-' }}',
                             industry: '{{ $inquiry->company && $inquiry->company->industries->isNotEmpty() ? $inquiry->company->industries->first()->name : 'N/A' }}',
                             customer: '{{ $inquiry->customer->name ?? 'N/A' }}',
                             email: '{{ $inquiry->customer->email ?? '-' }}',
@@ -273,6 +275,12 @@
                             </p>
                             <p><span class="font-semibold text-gray-600 dark:text-gray-300">Industry:</span><br> 
                                 <span x-text="selectedInquiry.industry"></span>
+                            </p>
+                            <p><span class="font-semibold text-gray-600 dark:text-gray-300">Factory Location:</span><br> 
+                                <span x-text="selectedInquiry.factory_location"></span>
+                            </p>
+                            <p><span class="font-semibold text-gray-600 dark:text-gray-300">Office Location:</span><br> 
+                                <span x-text="selectedInquiry.office_location"></span>
                             </p>
             
                             <p><span class="font-semibold text-gray-600 dark:text-gray-300">Customer:</span><br> 
