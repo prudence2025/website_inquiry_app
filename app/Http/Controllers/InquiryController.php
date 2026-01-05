@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class InquiryController extends Controller
 {
-     // helper to apply filters to a query builder
+    // helper to apply filters to a query builder
     protected function applyFilters($query, Request $request)
     {
         // date range
@@ -44,70 +44,70 @@ class InquiryController extends Controller
         return $query;
     }
 
-public function index(Request $request)
-{
-    // Load filter dropdown data
-    $companies = Company::select('id', 'name')->get();
-    $requirementTypes = RequirementType::select('name')->get()->unique('name')->values();
-    $receivers = Inquiry::select('receiver_name')->distinct()->orderBy('receiver_name')->pluck('receiver_name');
-    $processLevels = [
-        'Received',
-        'Quoted',
-        'Discussing',
-        'Settled',
-        'Dropped'
-    ];
+    public function index(Request $request)
+    {
+        // Load filter dropdown data
+        $companies = Company::select('id', 'name')->get();
+        $requirementTypes = RequirementType::select('name')->get()->unique('name')->values();
+        $receivers = Inquiry::select('receiver_name')->distinct()->orderBy('receiver_name')->pluck('receiver_name');
+        $processLevels = [
+            'Received',
+            'Quoted',
+            'Discussing',
+            'Settled',
+            'Dropped'
+        ];
 
-    // Convert to plain arrays for Alpine <=> @js()
-    $allCompanies = $companies->map(fn($c) => ['id' => $c->id, 'name' => $c->name])->values();
-    $allRequirementTypes = $requirementTypes->map(fn($r) => ['id' => $r->name, 'name' => $r->name])->values();
-    $allReceivers = $receivers->map(fn($r) => ['id' => $r, 'name' => $r])->values();
+        // Convert to plain arrays for Alpine <=> @js()
+        $allCompanies = $companies->map(fn($c) => ['id' => $c->id, 'name' => $c->name])->values();
+        $allRequirementTypes = $requirementTypes->map(fn($r) => ['id' => $r->name, 'name' => $r->name])->values();
+        $allReceivers = $receivers->map(fn($r) => ['id' => $r, 'name' => $r])->values();
 
-    // Base query
-    $query = Inquiry::with(['customer', 'company.industries'])->latest();
+        // Base query
+        $query = Inquiry::with(['customer', 'company.industries'])->orderBy('inquiry_date', 'desc');
 
-    // Apply filters
-    if ($request->filled('date_from')) {
-        $query->whereDate('inquiry_date', '>=', $request->date_from);
-    }
-    if ($request->filled('date_to')) {
-        $query->whereDate('inquiry_date', '<=', $request->date_to);
-    }
-    if ($request->filled('requirement_type')) {
-        $query->where('requirement_type', $request->requirement_type);
-    }
-    if ($request->filled('receiver_name')) {
-        $query->where('receiver_name', $request->receiver_name);
-    }
-    if ($request->filled('process_level')) {
-        $query->where('process_level', $request->process_level);
-    }
-    if ($request->filled('company_id')) {
-        $query->where('company_id', $request->company_id);
-    }
+        // Apply filters
+        if ($request->filled('date_from')) {
+            $query->whereDate('inquiry_date', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('inquiry_date', '<=', $request->date_to);
+        }
+        if ($request->filled('requirement_type')) {
+            $query->where('requirement_type', $request->requirement_type);
+        }
+        if ($request->filled('receiver_name')) {
+            $query->where('receiver_name', $request->receiver_name);
+        }
+        if ($request->filled('process_level')) {
+            $query->where('process_level', $request->process_level);
+        }
+        if ($request->filled('company_id')) {
+            $query->where('company_id', $request->company_id);
+        }
 
-    // Export CSV
-    if ($request->filled('export') && $request->export === 'csv') {
-        $inquiries = $query->get();
-        return $this->streamCsvDownload($inquiries);
+        // Export CSV
+        if ($request->filled('export') && $request->export === 'csv') {
+            $inquiries = $query->get();
+            return $this->streamCsvDownload($inquiries);
+        }
+
+        // ✅ Paginate (10 per page)
+        $inquiries = $query->paginate(10)->appends($request->query());
+
+        return view('inquiries.index', compact(
+            'inquiries',
+            'allCompanies',
+            'allRequirementTypes',
+            'allReceivers',
+            'processLevels'
+        ));
     }
-
-    // ✅ Paginate (10 per page)
-    $inquiries = $query->paginate(10)->appends($request->query());
-
-    return view('inquiries.index', compact(
-        'inquiries',
-        'allCompanies',
-        'allRequirementTypes',
-        'allReceivers',
-        'processLevels'
-    ));
-}
 
     // Optionally separate export route (not required). This uses same filters.
     public function export(Request $request)
     {
-        $query = Inquiry::with(['customer', 'company.industries'])->latest();
+        $query = Inquiry::with(['customer', 'company.industries'])->orderBy('inquiry_date', 'desc');
         $this->applyFilters($query, $request);
 
         $inquiries = $query->get();
@@ -116,73 +116,73 @@ public function index(Request $request)
     }
 
     protected function streamCsvDownload($inquiries)
-{
-    $headers = [
-        'Content-Type' => 'text/csv; charset=UTF-8',
-        'Content-Disposition' => 'attachment; filename="inquiries-export-' . now()->format('Y-m-d') . '.csv"',
-    ];
+    {
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="inquiries-export-' . now()->format('Y-m-d') . '.csv"',
+        ];
 
-    $callback = function () use ($inquiries) {
-        $file = fopen('php://output', 'w');
-        fputs($file, chr(0xEF) . chr(0xBB) . chr(0xBF)); // Add BOM for Excel UTF-8 compatibility
+        $callback = function () use ($inquiries) {
+            $file = fopen('php://output', 'w');
+            fputs($file, chr(0xEF) . chr(0xBB) . chr(0xBF)); // Add BOM for Excel UTF-8 compatibility
 
-        // ✅ Updated Header Row
-        fputcsv($file, [
-            'ID',
-            'Date',
-            'Requirement Type',
-            'Assign To',
-            'Company',
-            'Industry',
-            'Customer Name',
-            'Customer Email',
-            'Customer Phone',
-            'Status',
-            'Amount',
-            'More Info'
-        ]);
-
-        foreach ($inquiries as $inquiry) {
-            $industry = $inquiry->company && $inquiry->company->industries->isNotEmpty()
-                ? $inquiry->company->industries->first()->name
-                : '';
-
-            // ✅ Safely access customer details
-            $customerName = $inquiry->customer->name ?? '';
-            $customerEmail = $inquiry->customer->email ?? '';
-            $customerPhone = $inquiry->customer->phone ?? '';
-
+            // ✅ Updated Header Row
             fputcsv($file, [
-                $inquiry->id,
-                $inquiry->inquiry_date,
-                $inquiry->requirement_type,
-                $inquiry->receiver_name,
-                $inquiry->company->name ?? '',
-                $industry,
-                $customerName,
-                $customerEmail,
-                $customerPhone,
-                $inquiry->process_level,
-                $inquiry->amount,
-                $inquiry->more_info,
+                'ID',
+                'Date',
+                'Requirement Type',
+                'Assign To',
+                'Company',
+                'Industry',
+                'Customer Name',
+                'Customer Email',
+                'Customer Phone',
+                'Status',
+                'Amount',
+                'More Info'
             ]);
-        }
 
-        fclose($file);
-    };
+            foreach ($inquiries as $inquiry) {
+                $industry = $inquiry->company && $inquiry->company->industries->isNotEmpty()
+                    ? $inquiry->company->industries->first()->name
+                    : '';
 
-    return response()->stream($callback, 200, $headers);
-}
+                // ✅ Safely access customer details
+                $customerName = $inquiry->customer->name ?? '';
+                $customerEmail = $inquiry->customer->email ?? '';
+                $customerPhone = $inquiry->customer->phone ?? '';
 
-   public function create()
+                fputcsv($file, [
+                    $inquiry->id,
+                    $inquiry->inquiry_date,
+                    $inquiry->requirement_type,
+                    $inquiry->receiver_name,
+                    $inquiry->company->name ?? '',
+                    $industry,
+                    $customerName,
+                    $customerEmail,
+                    $customerPhone,
+                    $inquiry->process_level,
+                    $inquiry->amount,
+                    $inquiry->more_info,
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function create()
     {
         $companies = Company::with('customers:id,name,company_id')
-                        ->orderBy('created_at', 'desc')
-                        ->get(['id', 'name']);
+            ->orderBy('created_at', 'desc')
+            ->get(['id', 'name']);
         $requirementTypes = RequirementType::orderBy('name')->get(['id', 'name']);
         $receivers = User::where('id', '!=', 1)
-                   ->orderBy('name')
-                   ->pluck('name');
+            ->orderBy('name')
+            ->pluck('name');
         $processLevels = [
             'Received',
             'Quoted',
@@ -213,133 +213,135 @@ public function index(Request $request)
 
 
 
-public function store(Request $request)
-{
-    // if frontend provided a new company, create it first
-    $companyId = $request->input('company_id');
+    public function store(Request $request)
+    {
+        // if frontend provided a new company, create it first
+        $companyId = $request->input('company_id');
 
-    if ($request->filled('new_company_name')) {
-        $request->validate([
-            'new_company_name' => 'required|string|max:255',
-            'new_industry_id' => 'required|exists:industries,id',
-        ]);
+        if ($request->filled('new_company_name')) {
+            $request->validate([
+                'new_company_name' => 'required|string|max:255',
+                'new_industry_id' => 'required|exists:industries,id',
+            ]);
 
-        $company = \App\Models\Company::create([
-            'name' => $request->input('new_company_name'),
-        ]);
+            $company = \App\Models\Company::create([
+                'name' => $request->input('new_company_name'),
+            ]);
 
-        // attach industry (company_industry pivot)
-        $company->industries()->attach($request->input('new_industry_id'));
+            // attach industry (company_industry pivot)
+            $company->industries()->attach($request->input('new_industry_id'));
 
-        $companyId = $company->id;
-    }
-
-    // if frontend provided a new customer, create it
-    $customerId = $request->input('customer_id');
-    if ($request->filled('new_customer_name')) {
-        $request->validate([
-            'new_customer_name' => 'required|string|max:255',
-            // email/phone are optional
-            'new_customer_email' => 'nullable|email',
-            'new_customer_phone' => 'nullable|string|max:20',
-        ]);
-
-        // must have a company id to attach to
-        if (! $companyId) {
-            return back()->withInput()->with('error', 'Please select or create a company for the new customer.');
+            $companyId = $company->id;
         }
 
-        $customer = \App\Models\Customer::create([
-            'company_id' => $companyId,
-            'name' => $request->input('new_customer_name'),
-            'email' => $request->input('new_customer_email'),
-            'phone' => $request->input('new_customer_phone'),
-            'position' => $request->input('new_customer_position'),
-            'notes' => $request->input('new_customer_notes'),
+        // if frontend provided a new customer, create it
+        $customerId = $request->input('customer_id');
+        if ($request->filled('new_customer_name')) {
+            $request->validate([
+                'new_customer_name' => 'required|string|max:255',
+                // email/phone are optional
+                'new_customer_email' => 'nullable|email',
+                'new_customer_phone' => 'nullable|string|max:20',
+            ]);
+
+            // must have a company id to attach to
+            if (!$companyId) {
+                return back()->withInput()->with('error', 'Please select or create a company for the new customer.');
+            }
+
+            $customer = \App\Models\Customer::create([
+                'company_id' => $companyId,
+                'name' => $request->input('new_customer_name'),
+                'email' => $request->input('new_customer_email'),
+                'phone' => $request->input('new_customer_phone'),
+                'position' => $request->input('new_customer_position'),
+                'notes' => $request->input('new_customer_notes'),
+            ]);
+
+            $customerId = $customer->id;
+        }
+
+        // now validate inquiry fields (use the resolved $companyId and $customerId)
+        $validated = $request->validate([
+            'inquiry_date' => 'required|date',
+            'receiver_name' => 'required|string|max:255',
+            'requirement_type' => 'required|string|max:255',
+            'company_id' => 'nullable|exists:companies,id',
+            'customer_id' => 'nullable|exists:customers,id',
+            'more_info' => 'nullable|string',
+            'amount' => 'nullable|numeric',
+            'process_level' => 'required|string|max:255',
         ]);
 
-        $customerId = $customer->id;
+        // override with resolved IDs if present
+        if ($companyId) {
+            $validated['company_id'] = $companyId;
+        }
+        if ($customerId) {
+            $validated['customer_id'] = $customerId;
+        }
+
+        Inquiry::create($validated);
+
+        return redirect()->route('inquiries.index')->with('success', 'Inquiry added successfully!');
     }
 
-    // now validate inquiry fields (use the resolved $companyId and $customerId)
-    $validated = $request->validate([
-        'inquiry_date' => 'required|date',
-        'receiver_name' => 'required|string|max:255',
-        'requirement_type' => 'required|string|max:255',
-        'company_id' => 'nullable|exists:companies,id',
-        'customer_id' => 'nullable|exists:customers,id',
-        'more_info' => 'nullable|string',
-        'amount' => 'nullable|numeric',
-        'process_level' => 'required|string|max:255',
-    ]);
-
-    // override with resolved IDs if present
-    if ($companyId) {
-        $validated['company_id'] = $companyId;
-    }
-    if ($customerId) {
-        $validated['customer_id'] = $customerId;
-    }
-
-    Inquiry::create($validated);
-
-    return redirect()->route('inquiries.index')->with('success', 'Inquiry added successfully!');
-}
 
 
+    public function edit(Inquiry $inquiry)
+    {
+        // load companies along with their customers (only needed fields)
+        $companies = Company::with([
+            'customers' => function ($q) {
+                $q->select('id', 'name', 'company_id');
+            }
+        ])->get(['id', 'name']);
 
-public function edit(Inquiry $inquiry)
-{
-    // load companies along with their customers (only needed fields)
-    $companies = Company::with(['customers' => function ($q) {
-        $q->select('id', 'name', 'company_id');
-    }])->get(['id', 'name']);
+        $requirementTypes = RequirementType::orderBy('name')->get(['id', 'name']);
+        $receivers = User::where('id', '!=', 1)
+            ->orderBy('name')
+            ->pluck('name');
+        $processLevels = [
+            'Received',
+            'Quoted',
+            'Discussing',
+            'Settled',
+            'Dropped'
+        ];
 
-    $requirementTypes = RequirementType::orderBy('name')->get(['id', 'name']);
-    $receivers = User::where('id', '!=', 1)
-                   ->orderBy('name')
-                   ->pluck('name');
-    $processLevels = [
-        'Received',
-        'Quoted',
-        'Discussing',
-        'Settled',
-        'Dropped'
-    ];
-
-    return view('inquiries.edit', compact(
-        'inquiry',
-        'companies',
-        'requirementTypes',
-        'receivers',
-        'processLevels'
-    ));
-}
-
-
-public function update(Request $request, Inquiry $inquiry)
-{
-    $validated = $request->validate([
-        'inquiry_date' => 'required|date',
-        'receiver_name' => 'required|string|max:255',
-        'requirement_type' => 'required|string|max:255',
-        'company_id' => 'nullable|exists:companies,id',
-        'customer_id' => 'nullable|exists:customers,id',
-        'more_info' => 'nullable|string',
-        'amount' => 'nullable|numeric',
-        'process_level' => 'required|string|max:255',
-    ]);
-
-    if ($request->input('process_level') === 'Settled' && empty($request->input('amount'))) {
-        return back()
-            ->withInput()
-            ->withErrors(['amount' => 'You must enter an amount before setting the inquiry to Settled.']);
+        return view('inquiries.edit', compact(
+            'inquiry',
+            'companies',
+            'requirementTypes',
+            'receivers',
+            'processLevels'
+        ));
     }
 
-    $inquiry->update($validated);
 
-    return redirect()->route('inquiries.index')->with('success', 'Inquiry updated successfully!');
-}
+    public function update(Request $request, Inquiry $inquiry)
+    {
+        $validated = $request->validate([
+            'inquiry_date' => 'required|date',
+            'receiver_name' => 'required|string|max:255',
+            'requirement_type' => 'required|string|max:255',
+            'company_id' => 'nullable|exists:companies,id',
+            'customer_id' => 'nullable|exists:customers,id',
+            'more_info' => 'nullable|string',
+            'amount' => 'nullable|numeric',
+            'process_level' => 'required|string|max:255',
+        ]);
+
+        if ($request->input('process_level') === 'Settled' && empty($request->input('amount'))) {
+            return back()
+                ->withInput()
+                ->withErrors(['amount' => 'You must enter an amount before setting the inquiry to Settled.']);
+        }
+
+        $inquiry->update($validated);
+
+        return redirect()->route('inquiries.index')->with('success', 'Inquiry updated successfully!');
+    }
 
 
     public function destroy(Inquiry $inquiry)
