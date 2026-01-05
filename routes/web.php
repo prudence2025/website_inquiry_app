@@ -29,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
         ->middleware(
             when(
                 Features::canManageTwoFactorAuthentication()
-                    && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword'),
+                && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword'),
                 ['password.confirm'],
                 [],
             ),
@@ -58,6 +58,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/ajax/industries', [\App\Http\Controllers\IndustryController::class, 'ajaxStore'])
         ->name('industries.ajaxStore');
 
+    Route::get('/ajax/companies/{company}/customers', [\App\Http\Controllers\CompanyController::class, 'getCustomers'])
+        ->name('companies.customers');
+
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

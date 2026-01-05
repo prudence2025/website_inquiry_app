@@ -13,21 +13,28 @@
         <div class="p-4 bg-gray-50 dark:bg-neutral-800/50 rounded-lg border dark:border-neutral-700">
             <form action="{{ route('companies.index') }}" method="GET">
                 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 items-end">
-                    
+
                     {{-- Company Filter --}}
                     <div>
                         <flux:label>{{ __('Company') }}</flux:label>
                         <div x-data="singleSelect({ selectedId: @js(request('company_id')), options: @js($allCompanies) })"
-                             @click.outside="open = false" class="relative mt-1">
-                            <div @click="open = !open" class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md  dark:bg-neutral-900 cursor-pointer min-h-[40px]">
+                            @click.outside="open = false" class="relative mt-1">
+                            <div @click="open = !open"
+                                class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md  dark:bg-neutral-900 cursor-pointer min-h-[40px]">
                                 <span x-text="selectedName || 'All Companies'"></span>
-                                <button x-show="selectedId" type="button" @click.stop="clearSelection()" class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
+                                <button x-show="selectedId" type="button" @click.stop="clearSelection()"
+                                    class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
                             </div>
-                            <div x-show="open" x-transition.origin.top.left class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700" style="display: none;">
-                                <input type="text" x-model="search" placeholder="Search companies..." class="w-full p-2 mb-2 border-gray-300 dark:border-neutral-600 rounded-md text-sm bg-gray-50 dark:bg-neutral-700">
+                            <div x-show="open" x-transition.origin.top.left
+                                class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700"
+                                style="display: none;">
+                                <input type="text" x-model="search" placeholder="Search companies..."
+                                    class="w-full p-2 mb-2 border-gray-300 dark:border-neutral-600 rounded-md text-sm bg-gray-50 dark:bg-neutral-700">
                                 <div class="max-h-60 overflow-y-auto">
                                     <template x-for="option in filteredOptions" :key="option.id">
-                                        <div @click="select(option); open = false;" class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700" x-text="option.name"></div>
+                                        <div @click="select(option); open = false;"
+                                            class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700"
+                                            x-text="option.name"></div>
                                     </template>
                                 </div>
                             </div>
@@ -35,34 +42,94 @@
                         </div>
                     </div>
 
+                    {{-- Factory Location Filter --}}
+                    <div>
+                        <flux:label>{{ __('Factory Location') }}</flux:label>
+                        <div x-data="singleSelect({ selectedId: @js(request('factory_location')), options: @js($allFactoryLocations) })"
+                            @click.outside="open = false" class="relative mt-1">
+                            <div @click="open = !open"
+                                class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md dark:bg-neutral-900 cursor-pointer min-h-[40px]">
+                                <span x-text="selectedName || 'All Factory Locations'"></span>
+                                <button x-show="selectedId" type="button" @click.stop="clearSelection()"
+                                    class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
+                            </div>
+                            <div x-show="open" x-transition.origin.top.left
+                                class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700"
+                                style="display: none;">
+                                <input type="text" x-model="search" placeholder="Search locations..."
+                                    class="w-full p-2 mb-2 border-gray-300 dark:border-neutral-600 rounded-md text-sm bg-gray-50 dark:bg-neutral-700">
+                                <div class="max-h-60 overflow-y-auto">
+                                    <template x-for="option in filteredOptions" :key="option.id">
+                                        <div @click="select(option); open = false;"
+                                            class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700"
+                                            x-text="option.name"></div>
+                                    </template>
+                                </div>
+                            </div>
+                            <input type="hidden" name="factory_location" :value="selectedId">
+                        </div>
+                    </div>
+
+                    {{-- Office Location Filter --}}
+                    <div>
+                        <flux:label>{{ __('Office Location') }}</flux:label>
+                        <div x-data="singleSelect({ selectedId: @js(request('office_location')), options: @js($allOfficeLocations) })"
+                            @click.outside="open = false" class="relative mt-1">
+                            <div @click="open = !open"
+                                class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md dark:bg-neutral-900 cursor-pointer min-h-[40px]">
+                                <span x-text="selectedName || 'All Office Locations'"></span>
+                                <button x-show="selectedId" type="button" @click.stop="clearSelection()"
+                                    class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
+                            </div>
+                            <div x-show="open" x-transition.origin.top.left
+                                class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700"
+                                style="display: none;">
+                                <input type="text" x-model="search" placeholder="Search locations..."
+                                    class="w-full p-2 mb-2 border-gray-300 dark:border-neutral-600 rounded-md text-sm bg-gray-50 dark:bg-neutral-700">
+                                <div class="max-h-60 overflow-y-auto">
+                                    <template x-for="option in filteredOptions" :key="option.id">
+                                        <div @click="select(option); open = false;"
+                                            class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700"
+                                            x-text="option.name"></div>
+                                    </template>
+                                </div>
+                            </div>
+                            <input type="hidden" name="office_location" :value="selectedId">
+                        </div>
+                    </div>
+
                     {{-- Industry Filter (Unchanged) --}}
                     <div>
-                            <flux:label>{{ __('Industry') }}</flux:label>
-                            <div x-data="singleSelect({ selectedId: @js(request('industry_id')), options: @js($allIndustries) })"
-                                @click.outside="open = false" class="relative mt-1">
-                                <div @click="open = !open" class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md  dark:bg-neutral-900 cursor-pointer min-h-[40px]">
-                                    <span x-text="selectedName || 'All Industries'"></span>
-                                    <button x-show="selectedId" type="button" @click.stop="clearSelection()" class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
-                                </div>
-                                <div x-show="open" x-transition.origin.top.left class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700" style="display: none;">
-                                    <input type="text" x-model="search" placeholder="Search industries..." class="w-full p-2 mb-2 border-gray-300 dark:border-neutral-600 rounded-md text-sm bg-gray-50 dark:bg-neutral-700">
-                                    <div class="max-h-60 overflow-y-auto">
-                                        <template x-for="option in filteredOptions" :key="option.id">
-                                            <div @click="select(option); open = false;" class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700" x-text="option.name"></div>
-                                        </template>
-                                    </div>
-                                </div>
-                                <input type="hidden" name="industry_id" :value="selectedId">
+                        <flux:label>{{ __('Industry') }}</flux:label>
+                        <div x-data="singleSelect({ selectedId: @js(request('industry_id')), options: @js($allIndustries) })"
+                            @click.outside="open = false" class="relative mt-1">
+                            <div @click="open = !open"
+                                class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md  dark:bg-neutral-900 cursor-pointer min-h-[40px]">
+                                <span x-text="selectedName || 'All Industries'"></span>
+                                <button x-show="selectedId" type="button" @click.stop="clearSelection()"
+                                    class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
                             </div>
-                    </div>      
-
-                 {{-- Buttons --}}
-                    <div>
-                        <div class="h-6"></div> 
-                        <div class="flex gap-3">
-                            <flux:button type="submit" variant="primary">Filter</flux:button>
-                            <flux:button as="a" href="{{ route('companies.index') }}" variant="danger">Reset</flux:button>
+                            <div x-show="open" x-transition.origin.top.left
+                                class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700"
+                                style="display: none;">
+                                <input type="text" x-model="search" placeholder="Search industries..."
+                                    class="w-full p-2 mb-2 border-gray-300 dark:border-neutral-600 rounded-md text-sm bg-gray-50 dark:bg-neutral-700">
+                                <div class="max-h-60 overflow-y-auto">
+                                    <template x-for="option in filteredOptions" :key="option.id">
+                                        <div @click="select(option); open = false;"
+                                            class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700"
+                                            x-text="option.name"></div>
+                                    </template>
+                                </div>
+                            </div>
+                            <input type="hidden" name="industry_id" :value="selectedId">
                         </div>
+                    </div>
+
+                    {{-- Buttons --}}
+                    <div class="col-span-full flex gap-3 justify-end mt-4">
+                        <flux:button type="submit" variant="primary">Filter</flux:button>
+                        <flux:button as="a" href="{{ route('companies.index') }}" variant="danger">Reset</flux:button>
                     </div>
                 </div>
             </form>
@@ -91,11 +158,14 @@
                                 {{ $company->industries->pluck('name')->join(', ') ?: 'None' }}
                             </td>
                             <td class="px-6 py-3 text-center flex justify-center gap-3">
-                                <a href="{{ route('companies.edit', $company) }}" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">Edit</a>
-                                <form action="{{ route('companies.destroy', $company) }}" method="POST" class="delete-form inline">
+                                <a href="{{ route('companies.edit', $company) }}"
+                                    class="font-medium text-blue-600 dark:text-blue-400 hover:underline">Edit</a>
+                                <form action="{{ route('companies.destroy', $company) }}" method="POST"
+                                    class="delete-form inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="button" class="font-medium text-red-600 dark:text-red-400 hover:underline delete-btn">Delete</button>
+                                    <button type="button"
+                                        class="font-medium text-red-600 dark:text-red-400 hover:underline delete-btn">Delete</button>
                                 </form>
                             </td>
                         </tr>
@@ -107,7 +177,7 @@
                         </tr>
                     @endforelse
                 </tbody>
-              {{-- Pagination and Show All Button Container --}}
+                {{-- Pagination and Show All Button Container --}}
                 <div class="mt-1 MX-auto px-6 mb-4">
                     <div>
                         {{-- Laravel Pagination --}}
@@ -115,18 +185,18 @@
                             {{ $companies->links() }}
                         @endif
                     </div>
-                
+
                     {{-- Show All Button (Only shows if pagination is necessary) --}}
                     @if(
-                        $companies instanceof \Illuminate\Pagination\LengthAwarePaginator && 
-                        $companies->lastPage() > 1
-                    )
-                    <div>
-                        <a href="{{ request('show') === 'all' ? route('companies.index') : route('companies.index', ['show' => 'all']) }}"
-                           class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
-                            {{ request('show') === 'all' ? 'Show Paginated' : 'Show All' }}
-                        </a>
-                    </div>
+                            $companies instanceof \Illuminate\Pagination\LengthAwarePaginator &&
+                            $companies->lastPage() > 1
+                        )
+                        <div>
+                            <a href="{{ request('show') === 'all' ? route('companies.index') : route('companies.index', ['show' => 'all']) }}"
+                                class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                                {{ request('show') === 'all' ? 'Show Paginated' : 'Show All' }}
+                            </a>
+                        </div>
                     @endif
                 </div>
             </table>

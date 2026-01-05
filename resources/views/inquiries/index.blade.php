@@ -110,6 +110,34 @@
                         <input type="hidden" name="company_id" :value="selectedId">
                     </div>
                 </div>
+
+                {{-- Factory Location --}}
+                <div>
+                    <flux:label>{{ __('Factory Location') }}</flux:label>
+                    <div x-data="singleSelect({ selectedId: @js(request('factory_location')), options: @js($allFactoryLocations) })"
+                        @click.outside="open = false" class="relative mt-1">
+                        <div @click="open = !open"
+                            class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md dark:bg-neutral-900 cursor-pointer min-h-[40px]">
+                            <span x-text="selectedName || 'All Factory Locations'"></span>
+                            <button x-show="selectedId" type="button" @click.stop="clearSelection()"
+                                class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
+                        </div>
+                        <div x-show="open" x-transition.origin.top.left
+                            class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700"
+                            style="display: none;">
+                            <input type="text" x-model="search" placeholder="Search locations..."
+                                class="w-full p-2 mb-2 border-gray-300 dark:border-neutral-600 rounded-md text-sm bg-gray-50 dark:bg-neutral-700">
+                            <div class="max-h-60 overflow-y-auto">
+                                <template x-for="option in filteredOptions" :key="option.id">
+                                    <div @click="select(option); open = false;"
+                                        class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700"
+                                        x-text="option.name"></div>
+                                </template>
+                            </div>
+                        </div>
+                        <input type="hidden" name="factory_location" :value="selectedId">
+                    </div>
+                </div>
     
                 {{-- Process Level --}}
                 <div>
@@ -159,7 +187,31 @@
                         :class="selectedId === {{ $inquiry->id }} ? 'bg-blue-100 dark:bg-blue-900/40' : ''"
                         @click="openPopup($event, {
                             id: {{ $inquiry->id }},
+                            inquiry_date: '{{ $inquiry->inquiry_date }}',
                             date: '{{ \Carbon\Carbon::parse($inquiry->inquiry_date)->format('Y/m/d') }}',
+                            type: '{{ $inquiry->requirement_type }}',
+                            requirement_type: '{{ $inquiry->requirement_type }}', // Alias for edit
+                            receiver: '{{ $inquiry->receiver_name }}',
+                            receiver_name: '{{ $inquiry->receiver_name }}', // Alias for edit
+                            company_id: '{{ $inquiry->company_id }}',
+                            company: '{{ $inquiry->company->name ?? 'N/A' }}',
+                            company_name: '{{ $inquiry->company->name ?? '' }}', // Alias for edit
+                            factory_location: '{{ $inquiry->company->factory_location ?? '-' }}',
+                            office_location: '{{ $inquiry->company->office_location ?? '-' }}',
+                            industry: '{{ $inquiry->company && $inquiry->company->industries->isNotEmpty() ? $inquiry->company->industries->first()->name : 'N/A' }}',
+                            customer_id: '{{ $inquiry->customer_id }}',
+                            customer: '{{ $inquiry->customer->name ?? 'N/A' }}',
+                            customer_name: '{{ $inquiry->customer->name ?? '' }}', // Alias for edit
+                            email: '{{ $inquiry->customer->email ?? '-' }}',
+                            phone: '{{ $inquiry->customer->phone ?? '-' }}',
+                            status: '{{ $inquiry->process_level }}',
+                            process_level: '{{ $inquiry->process_level }}', // Alias for edit
+                            amount_val: '{{ $inquiry->amount ?? 0 }}',
+                            amount: '{{ $inquiry->amount ?? 0 }}', // Raw amount for edit
+                            amount_formatted: '{{ number_format($inquiry->amount ?? 0, 2) }}', // Display amount
+                            info: @js($inquiry->more_info ?? ''),
+                            more_info: @js($inquiry->more_info ?? '') // Alias for edit
+                        })"
                             type: '{{ $inquiry->requirement_type }}',
                             receiver: '{{ $inquiry->receiver_name }}',
                             company: '{{ $inquiry->company->name ?? 'N/A' }}',
@@ -206,7 +258,21 @@
                     </td>
                     <td class="px-6 py-2 text-center">
                         <div class="flex justify-center items-center gap-3" @click.stop>
-                            <a href="{{ route('inquiries.edit', $inquiry) }}" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">Edit</a>
+                            <button @click.stop="openEditPopup($event, {
+                                id: {{ $inquiry->id }},
+                                inquiry_date: '{{ $inquiry->inquiry_date }}',
+                                requirement_type: '{{ $inquiry->requirement_type }}',
+                                receiver_name: '{{ $inquiry->receiver_name }}',
+                                company_id: '{{ $inquiry->company_id }}',
+                                company_name: '{{ $inquiry->company->name ?? '' }}',
+                                customer_id: '{{ $inquiry->customer_id }}',
+                                customer_name: '{{ $inquiry->customer->name ?? '' }}',
+                                process_level: '{{ $inquiry->process_level }}',
+                                amount: '{{ $inquiry->amount }}',
+                                more_info: @js($inquiry->more_info ?? '')
+                            })" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                                Edit
+                            </button>
                             <form action="{{ route('inquiries.destroy', $inquiry) }}" method="POST" class="inline delete-form">
                                 @csrf
                                 @method('DELETE')
@@ -294,7 +360,7 @@
                                 <span x-text="selectedInquiry.email"></span>
                             </p>
                             <p><span class="font-semibold text-gray-600 dark:text-gray-300">Amount:</span><br> 
-                                LKR <span x-text="selectedInquiry.amount"></span>
+                                LKR <span x-text="selectedInquiry.amount_formatted"></span>
                             </p>
                         </div>
             
@@ -310,14 +376,115 @@
                                     class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-gray-800 dark:text-gray-300 rounded-md text-sm font-medium transition">
                                 Cancel
                             </button>
-                            <a :href="`/inquiries/${selectedInquiry.id}/edit`"
-                               class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition">
+                            <button @click="closePopup(); openEditPopup($event, selectedInquiry)"
+                                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition">
                                 Edit
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
             </template>
+
+            {{-- EDIT MODAL POPUP --}}
+            <template x-if="editOpen">
+                <div class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+                    <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="closeEditPopup()"></div>
+                    
+                    <div class="relative bg-white dark:bg-neutral-900 w-full max-w-2xl rounded-xl shadow-2xl border border-gray-200 dark:border-neutral-700 p-6" x-trap.noscroll="editOpen">
+                        
+                        <div class="flex justify-between items-center mb-4 pb-2 border-b dark:border-neutral-700">
+                            <h2 class="text-xl font-bold dark:text-neutral-100">Edit Inquiry #<span x-text="editForm.id"></span></h2>
+                            <button @click="closeEditPopup()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+                        </div>
+
+                        <form @submit.prevent="saveEdit" class="space-y-4">
+                            
+                            {{-- Date & Receiver --}}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <flux:label>{{ __('Inquiry Date') }}</flux:label>
+                                    <input type="date" x-model="editForm.inquiry_date" class="w-full p-2 border rounded bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
+                                </div>
+                                <div>
+                                    <flux:label>{{ __('Assign To') }}</flux:label>
+                                    <select x-model="editForm.receiver_name" class="w-full p-2 border rounded bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
+                                        <option value="">Select Assign To</option>
+                                        <template x-for="r in allReceivers" :key="r.id">
+                                            <option :value="r.id" x-text="r.name" :selected="r.id == editForm.receiver_name"></option>
+                                        </template>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {{-- Requirement --}}
+                            <div>
+                                <flux:label>{{ __('Requirement Type') }}</flux:label>
+                                <select x-model="editForm.requirement_type" class="w-full p-2 border rounded bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
+                                    <option value="">Select Type</option>
+                                    <template x-for="rt in allRequirementTypes" :key="rt.id">
+                                        <option :value="rt.id" x-text="rt.name" :selected="rt.id == editForm.requirement_type"></option>
+                                    </template>
+                                </select>
+                            </div>
+
+                            {{-- Company --}}
+                            <div>
+                                <flux:label>{{ __('Company') }}</flux:label>
+                                <div class="relative">
+                                    <input type="text" x-model="editCompanySearch" @input="filterCompanies()" @focus="showCompanyDropdown=true" @click.outside="showCompanyDropdown=false"
+                                           class="w-full p-2 border rounded bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" placeholder="Search company...">
+                                    <div x-show="showCompanyDropdown" class="absolute z-10 w-full mt-1 bg-white dark:bg-neutral-800 border dark:border-neutral-700 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                                        <template x-for="c in filteredCompanies" :key="c.id">
+                                            <div @click="selectEditCompany(c)" class="p-2 hover:bg-gray-100 dark:hover:bg-neutral-700 cursor-pointer" x-text="c.name"></div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Customer (Dynamic) --}}
+                            <div>
+                                <flux:label>{{ __('Customer') }}</flux:label>
+                                <select x-model="editForm.customer_id" class="w-full p-2 border rounded bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" :disabled="!editForm.company_id">
+                                    <option value="">Select Customer</option>
+                                    <template x-for="cust in customersForCompany" :key="cust.id">
+                                        <option :value="cust.id" x-text="cust.name" :selected="cust.id == editForm.customer_id"></option>
+                                    </template>
+                                </select>
+                                <p x-show="!editForm.company_id" class="text-xs text-gray-500 mt-1">Select a company first.</p>
+                                <p x-show="loadingCustomers" class="text-xs text-blue-500 mt-1">Loading customers...</p>
+                            </div>
+
+                            {{-- Status & Amount --}}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <flux:label>{{ __('Status') }}</flux:label>
+                                    <select x-model="editForm.process_level" class="w-full p-2 border rounded bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
+                                        @foreach ($processLevels as $level)
+                                            <option value="{{ $level }}">{{ $level }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div>
+                                    <flux:label>{{ __('Amount (LKR)') }}</flux:label>
+                                    <input type="number" step="0.01" x-model="editForm.amount" class="w-full p-2 border rounded bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white">
+                                </div>
+                            </div>
+
+                            {{-- More Info --}}
+                            <div>
+                                <flux:label>{{ __('More Info') }}</flux:label>
+                                <textarea x-model="editForm.more_info" rows="3" class="w-full p-2 border rounded bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white"></textarea>
+                            </div>
+
+                            <div class="flex justify-end gap-3 pt-2">
+                                <flux:button type="button" variant="ghost" @click="closeEditPopup()">Cancel</flux:button>
+                                <flux:button type="submit" variant="primary">Save Changes</flux:button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </template>
+
             </tbody>
             {{-- Pagination --}}
             <div class="mt-1 MX-auto px-6 mb-4">
@@ -333,19 +500,186 @@
 function inquiryTable() {
     return {
         popupOpen: false,
+        editOpen: false,
         selectedId: null,
         selectedInquiry: {},
-        openPopup(event, data) {
-            // prevent popup when clicking buttons, links, icons
-            if (event.target.closest('a, button, form')) return;
+        
+        // Data sources from PHP
+        allCompanies: @js($allCompanies),
+        allReceivers: @js($allReceivers),
+        allRequirementTypes: @js($allRequirementTypes),
+        
+        // Edit state
+        editForm: {
+            id: null,
+            inquiry_date: '',
+            receiver_name: '',
+            requirement_type: '',
+            company_id: '',
+            customer_id: '',
+            process_level: '',
+            amount: '',
+            more_info: ''
+        },
+        
+        // Company Autocomplete in Edit
+        editCompanySearch: '',
+        showCompanyDropdown: false,
+        filteredCompanies: [],
+        
+        // Customer Loading
+        customersForCompany: [],
+        loadingCustomers: false,
 
+        init() {
+            this.filteredCompanies = this.allCompanies;
+        },
+
+        openPopup(event, data) {
+            if (event.target.closest('a, button, form')) return;
             this.selectedId = data.id;
             this.selectedInquiry = data;
             this.popupOpen = true;
         },
+
         closePopup() {
             this.popupOpen = false;
             this.selectedId = null;
+        },
+        
+        openEditPopup(event, data) {
+            this.editForm = { ...data };
+            this.editOpen = true;
+            
+            // Setup Company Search Info
+            this.editCompanySearch = data.company_name || '';
+            this.filterCompanies();
+            
+            // Fetch Customers
+            if(this.editForm.company_id) {
+                this.fetchCustomers(this.editForm.company_id);
+            } else {
+                this.customersForCompany = [];
+            }
+        },
+        
+        closeEditPopup() {
+            this.editOpen = false;
+            this.editForm = { id: null, inquiry_date: '', receiver_name: '', requirement_type: '', company_id: '', customer_id: '', process_level: '', amount: '', more_info: '' };
+        },
+        
+        filterCompanies() {
+            if(this.editCompanySearch === '') {
+                this.filteredCompanies = this.allCompanies;
+            } else {
+                this.filteredCompanies = this.allCompanies.filter(c => c.name.toLowerCase().includes(this.editCompanySearch.toLowerCase()));
+            }
+        },
+        
+        selectEditCompany(company) {
+            this.editForm.company_id = company.id;
+            this.editCompanySearch = company.name;
+            this.showCompanyDropdown = false;
+            // Fetch customers
+            this.fetchCustomers(company.id);
+            this.editForm.customer_id = '';
+        },
+        
+        async fetchCustomers(companyId) {
+            this.loadingCustomers = true;
+            this.customersForCompany = [];
+            try {
+                // Use the route generated by Laravel
+                const url = `/ajax/companies/${companyId}/customers`; 
+                const res = await fetch(url);
+                if(res.ok) {
+                    const data = await res.json();
+                    this.customersForCompany = data.customers;
+                }
+            } catch(e) {
+                console.error(e);
+            } finally {
+                this.loadingCustomers = false;
+            }
+        },
+        
+        async saveEdit() {
+            try {
+                const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                const url = `/inquiries/${this.editForm.id}`;
+                
+                const res = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': token,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify(this.editForm)
+                });
+                
+                const data = await res.json();
+
+                if (!res.ok) {
+                     if (res.status === 422) {
+                        let errorMsg = data.message || 'Validation Failed';
+                        if (data.errors) {
+                             // Get the first error message from the object
+                             const firstErrorKey = Object.keys(data.errors)[0];
+                             if(firstErrorKey) {
+                                 errorMsg = data.errors[firstErrorKey][0];
+                             }
+                        }
+                        
+                        Swal.fire({
+                             title: 'Validation Error',
+                             text: errorMsg,
+                             icon: 'error',
+                             background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
+                             color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827',
+                        });
+                        return;
+                     }
+                }
+                
+                if(data.success) {
+                    this.editOpen = false;
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Inquiry updated successfully.',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
+                        color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827',
+                    }).then(() => {
+                        window.location.reload(); // Reload to refresh table data (simplest way to update UI)
+                        // Ideally we would update the row data here without reload, 
+                        // but since the table is server-side rendered with blade loop, 
+                        // a reload or full datatable JS re-render is needed. 
+                        // Given 'filter preservation' requirement, a reload preserves filters 
+                        // because we kept the query params in URL when filtering.
+                    });
+                } else {
+                     Swal.fire({
+                         title: 'Error',
+                         text: 'Failed to update inquiry.',
+                         icon: 'error',
+                         background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
+                         color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827',
+                     });
+                }
+            } catch(e) {
+                console.error(e);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'An error occurred.',
+                    icon: 'error',
+                    background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
+                    color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827',
+                });
+            }
         }
     };
     }

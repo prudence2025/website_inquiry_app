@@ -64,6 +64,13 @@ class InquiryController extends Controller
         $allRequirementTypes = $requirementTypes->map(fn($r) => ['id' => $r->name, 'name' => $r->name])->values();
         $allReceivers = $receivers->map(fn($r) => ['id' => $r, 'name' => $r])->values();
 
+        $allFactoryLocations = Company::whereNotNull('factory_location')
+            ->distinct()
+            ->orderBy('factory_location')
+            ->pluck('factory_location')
+            ->map(fn($loc) => ['id' => $loc, 'name' => $loc])
+            ->values();
+
         // Base query
         $query = Inquiry::with(['customer', 'company.industries'])->orderBy('inquiry_date', 'desc');
 
@@ -86,6 +93,12 @@ class InquiryController extends Controller
         if ($request->filled('company_id')) {
             $query->where('company_id', $request->company_id);
         }
+        if ($request->filled('factory_location')) {
+            $query->whereHas('company', function ($q) use ($request) {
+                // Exact match for dropdown
+                $q->where('factory_location', $request->factory_location);
+            });
+        }
 
         // Export CSV
         if ($request->filled('export') && $request->export === 'csv') {
@@ -101,7 +114,8 @@ class InquiryController extends Controller
             'allCompanies',
             'allRequirementTypes',
             'allReceivers',
-            'processLevels'
+            'processLevels',
+            'allFactoryLocations'
         ));
     }
 
@@ -338,12 +352,31 @@ class InquiryController extends Controller
         ]);
 
         if ($request->input('process_level') === 'Settled' && empty($request->input('amount'))) {
+            $message = 'You must enter an amount before setting the inquiry to Settled.';
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => $message,
+                    'errors' => ['amount' => [$message]]
+                ], 422);
+            }
+
             return back()
                 ->withInput()
-                ->withErrors(['amount' => 'You must enter an amount before setting the inquiry to Settled.']);
+                ->withErrors(['amount' => $message]);
         }
 
         $inquiry->update($validated);
+
+        if ($request->wantsJson()) {
+            // Load relationships needed for display in the table
+            $inquiry->load(['customer', 'company.industries']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Inquiry updated successfully!',
+                'inquiry' => $inquiry
+            ]);
+        }
 
         return redirect()->route('inquiries.index')->with('success', 'Inquiry updated successfully!');
     }

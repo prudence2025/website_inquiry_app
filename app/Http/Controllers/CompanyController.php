@@ -27,6 +27,16 @@ class CompanyController extends Controller
             });
         }
 
+        // Apply factory location filter if provided
+        if ($request->filled('factory_location')) {
+            $query->where('factory_location', $request->factory_location);
+        }
+
+        // Apply office location filter if provided
+        if ($request->filled('office_location')) {
+            $query->where('office_location', $request->office_location);
+        }
+
         // If "show=all" is in the URL, get all records
         if ($request->input('show') === 'all') {
             $companies = $query->get();
@@ -39,8 +49,22 @@ class CompanyController extends Controller
         $allCompanies = Company::orderBy('name')->get(['id', 'name']);
         $allIndustries = Industry::orderBy('name')->get(['id', 'name']);
 
+        $allFactoryLocations = Company::whereNotNull('factory_location')
+            ->distinct()
+            ->orderBy('factory_location')
+            ->pluck('factory_location')
+            ->map(fn($loc) => ['id' => $loc, 'name' => $loc])
+            ->values();
+
+        $allOfficeLocations = Company::whereNotNull('office_location')
+            ->distinct()
+            ->orderBy('office_location')
+            ->pluck('office_location')
+            ->map(fn($loc) => ['id' => $loc, 'name' => $loc])
+            ->values();
+
         // Pass all data to the view
-        return view('companies.index', compact('companies', 'allCompanies', 'allIndustries'));
+        return view('companies.index', compact('companies', 'allCompanies', 'allIndustries', 'allFactoryLocations', 'allOfficeLocations'));
     }
 
     public function create()
@@ -138,6 +162,13 @@ class CompanyController extends Controller
                 'customers' => []
             ]
         ], 201);
+    }
+
+    public function getCustomers(Company $company)
+    {
+        return response()->json([
+            'customers' => $company->customers()->select('id', 'name')->orderBy('name')->get()
+        ]);
     }
 
 }
