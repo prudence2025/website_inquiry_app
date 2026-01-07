@@ -10,38 +10,38 @@
         </div>
 
         {{-- Filter Section --}}
-        <div class="p-4 bg-gray-50 dark:bg-neutral-800/50 rounded-lg border dark:border-neutral-700">
+        <div class="p-4 bg-gray-50 dark:bg-neutral-800/50 rounded-lg border dark:border-neutral-700 shadow-sm">
             <form action="{{ route('customers.index') }}" method="GET">
                 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 items-end">
                     {{-- Search --}}
                     <div>
                         <flux:label for="search_input">{{ __('Search (Name, Email, Position)') }}</flux:label>
                         <input type="text" name="search" id="search_input" value="{{ request('search') }}"
-                               placeholder="Search customers..."
-                               class="mt-1 w-full p-2.5 border border-gray-300 dark:border-neutral-700 rounded-md dark:bg-neutral-900 text-sm dark:text-white">
+                            placeholder="Search customers..."
+                            class="mt-1 w-full p-2.5 border border-gray-300 dark:border-neutral-700 rounded-md bg-transparent text-sm dark:text-white">
                     </div>
 
                     {{-- Company Filter --}}
                     <div>
                         <flux:label>{{ __('Company') }}</flux:label>
                         <div x-data="singleSelect({ selectedId: @js(request('company_id')), options: @js($allCompanies) })"
-                             @click.outside="open = false" class="relative mt-1">
+                            @click.outside="open = false" class="relative mt-1">
                             <div @click="open = !open"
-                                 class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md dark:bg-neutral-900 cursor-pointer min-h-[40px]">
+                                class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md bg-transparent cursor-pointer min-h-[40px]">
                                 <span x-text="selectedName || 'All Companies'"></span>
                                 <button x-show="selectedId" type="button" @click.stop="clearSelection()"
-                                        class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
+                                    class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
                             </div>
                             <div x-show="open" x-transition.origin.top.left
-                                 class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700"
-                                 style="display: none;">
+                                class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700"
+                                style="display: none;">
                                 <input type="text" x-model="search" placeholder="Search companies..."
-                                       class="w-full p-2 mb-2 border-gray-300 dark:border-neutral-600 rounded-md text-sm bg-gray-50 dark:bg-neutral-700">
+                                    class="w-full p-2 mb-2 border-gray-300 dark:border-neutral-600 rounded-md text-sm bg-gray-50 dark:bg-neutral-700">
                                 <div class="max-h-40 overflow-y-auto">
                                     <template x-for="option in filteredOptions" :key="option.id">
                                         <div @click="select(option); open = false;"
-                                             class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700"
-                                             x-text="option.name"></div>
+                                            class="p-2 cursor-pointer rounded-md hover:bg-gray-100 dark:hover:bg-neutral-700"
+                                            x-text="option.name"></div>
                                     </template>
                                 </div>
                             </div>
@@ -50,12 +50,9 @@
                     </div>
 
                     {{-- Buttons --}}
-                    <div>
-                        <div class="h-6"></div>
-                        <div class="flex gap-3">
-                            <flux:button type="submit" variant="primary">Filter</flux:button>
-                            <flux:button as="a" href="{{ route('customers.index') }}" variant="danger">Reset</flux:button>
-                        </div>
+                    <div class="col-span-full flex gap-3 justify-end mt-4">
+                        <flux:button type="submit" variant="primary">Filter</flux:button>
+                        <flux:button as="a" href="{{ route('customers.index') }}" variant="danger">Reset</flux:button>
                     </div>
                 </div>
             </form>
@@ -69,11 +66,11 @@
                     {{ $customers->links() }}
                 @endif
             </div>
-           {{-- Show All / Show Paginated --}}
+            {{-- Show All / Show Paginated --}}
             @if($customers instanceof \Illuminate\Pagination\LengthAwarePaginator && $customers->lastPage() > 1)
                 <div>
                     <a href="{{ request('show') === 'all' ? route('customers.index') : route('customers.index', ['show' => 'all']) }}"
-                       class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                        class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
                         {{ request('show') === 'all' ? 'Show Paginated' : 'Show All' }}
                     </a>
                 </div>
@@ -96,14 +93,14 @@
                         <tr class="border-b dark:border-neutral-700 transition cursor-pointer hover:bg-blue-50/50 dark:hover:bg-blue-900/20"
                             :class="selectedCustomer?.id === {{ $customer->id }} ? 'bg-blue-100 dark:bg-blue-900/40' : ''"
                             @click="openPopup($event, {
-                                id: {{ $customer->id }},
-                                name: '{{ $customer->name }}',
-                                email: '{{ $customer->email ?? '' }}',
-                                phone: '{{ $customer->phone ?? '' }}',
-                                position: '{{ $customer->position ?? '' }}',
-                                notes: `{{ addslashes($customer->notes ?? '') }}`,
-                                company: '{{ $customer->company->name ?? 'N/A' }}'
-                            })">
+                                    id: {{ $customer->id }},
+                                    name: '{{ $customer->name }}',
+                                    email: '{{ $customer->email ?? '' }}',
+                                    phone: '{{ $customer->phone ?? '' }}',
+                                    position: '{{ $customer->position ?? '' }}',
+                                    notes: `{{ addslashes($customer->notes ?? '') }}`,
+                                    company: '{{ $customer->company->name ?? 'N/A' }}'
+                                })">
                             <th scope="row" class="px-6 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 {{ $customer->name }}
                             </th>
@@ -113,16 +110,18 @@
                             </td>
                             <td class="px-6 py-3">
                                 <p class="text-gray-900 dark:text-white">{{ $customer->company->name ?? 'N/A' }}</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $customer->position ?? 'No Position' }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    {{ $customer->position ?? 'No Position' }}</p>
                             </td>
                             <td class="px-6 py-3 text-center flex justify-center gap-3" @click.stop>
                                 <a href="{{ route('customers.edit', $customer) }}"
-                                   class="font-medium text-blue-600 dark:text-blue-400 hover:underline">Edit</a>
-                                <form action="{{ route('customers.destroy', $customer) }}" method="POST" class="delete-form inline">
+                                    class="font-medium text-blue-600 dark:text-blue-400 hover:underline">Edit</a>
+                                <form action="{{ route('customers.destroy', $customer) }}" method="POST"
+                                    class="delete-form inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="button"
-                                            class="font-medium text-red-600 dark:text-red-400 hover:underline delete-btn">
+                                        class="font-medium text-red-600 dark:text-red-400 hover:underline delete-btn">
                                         Delete
                                     </button>
                                 </form>
@@ -142,41 +141,46 @@
             <template x-if="popupOpen">
                 <div class="fixed inset-0 z-50 flex items-center justify-center">
                     <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="closePopup()"></div>
-                    <div x-show="popupOpen"
-                         x-transition.scale.origin.center
-                         class="relative bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-neutral-700 w-full max-w-lg p-6">
+                    <div x-show="popupOpen" x-transition.scale.origin.center
+                        class="relative bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-neutral-700 w-full max-w-lg p-6">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Customer Details</h2>
-                            <button @click="closePopup()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">✕</button>
+                            <button @click="closePopup()"
+                                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">✕</button>
                         </div>
 
                         <div class="grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
                             <p><span class="font-semibold text-gray-600 dark:text-gray-300">Name:</span><br>
-                                <span x-text="selectedCustomer.name"></span></p>
+                                <span x-text="selectedCustomer.name"></span>
+                            </p>
                             <p><span class="font-semibold text-gray-600 dark:text-gray-300">Company:</span><br>
-                                <span x-text="selectedCustomer.company"></span></p>
+                                <span x-text="selectedCustomer.company"></span>
+                            </p>
                             <p><span class="font-semibold text-gray-600 dark:text-gray-300">Email:</span><br>
-                                <span x-text="selectedCustomer.email || '—'"></span></p>
+                                <span x-text="selectedCustomer.email || '—'"></span>
+                            </p>
                             <p><span class="font-semibold text-gray-600 dark:text-gray-300">Phone:</span><br>
-                                <span x-text="selectedCustomer.phone || '—'"></span></p>
+                                <span x-text="selectedCustomer.phone || '—'"></span>
+                            </p>
                             <p><span class="font-semibold text-gray-600 dark:text-gray-300">Position:</span><br>
-                                <span x-text="selectedCustomer.position || '—'"></span></p>
+                                <span x-text="selectedCustomer.position || '—'"></span>
+                            </p>
                         </div>
 
                         {{-- Notes --}}
                         <div class="mt-5 bg-gray-50 dark:bg-neutral-800/60 p-3 rounded-md">
                             <p class="font-semibold text-gray-700 dark:text-gray-200 mb-1">Notes:</p>
                             <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-300 whitespace-pre-line max-h-40 overflow-y-auto"
-                               x-text="selectedCustomer.notes || 'No notes provided.'"></p>
+                                x-text="selectedCustomer.notes || 'No notes provided.'"></p>
                         </div>
 
                         <div class="flex justify-end gap-3 mt-6">
                             <button @click="closePopup()"
-                                    class="px-4 py-2 bg-gray-200 dark:bg-neutral-800 text-gray-800 dark:text-gray-300 rounded-md text-sm hover:bg-gray-300 dark:hover:bg-neutral-700 transition">
+                                class="px-4 py-2 bg-gray-200 dark:bg-neutral-800 text-gray-800 dark:text-gray-300 rounded-md text-sm hover:bg-gray-300 dark:hover:bg-neutral-700 transition">
                                 Close
                             </button>
-                             <a :href="`/customers/${selectedCustomer.id}/edit`"
-                               class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition">
+                            <a :href="`/customers/${selectedCustomer.id}/edit`"
+                                class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition">
                                 Edit
                             </a>
                         </div>
@@ -231,7 +235,7 @@
 
         // SweetAlert Delete
         document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
+            btn.addEventListener('click', function (e) {
                 e.preventDefault();
                 const form = this.closest('form');
 
@@ -252,15 +256,15 @@
         });
 
         @if(session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Success!',
-            text: '{{ session('success') }}',
-            timer: 2000,
-            showConfirmButton: false,
-            background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
-            color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827',
-        });
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: '{{ session('success') }}',
+                timer: 2000,
+                showConfirmButton: false,
+                background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
+                color: document.documentElement.classList.contains('dark') ? '#f9fafb' : '#111827',
+            });
         @endif
     </script>
 </x-layouts.app>

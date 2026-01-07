@@ -10,7 +10,7 @@
         </div>
 
         {{-- START: Filter Section --}}
-        <div class="p-4 bg-gray-50 dark:bg-neutral-800/50 rounded-lg border dark:border-neutral-700">
+        <div class="p-4 bg-gray-50 dark:bg-neutral-800/50 rounded-lg border dark:border-neutral-700 shadow-sm">
             <form action="{{ route('companies.index') }}" method="GET">
                 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 items-end">
 
@@ -20,7 +20,7 @@
                         <div x-data="singleSelect({ selectedId: @js(request('company_id')), options: @js($allCompanies) })"
                             @click.outside="open = false" class="relative mt-1">
                             <div @click="open = !open"
-                                class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md  dark:bg-neutral-900 cursor-pointer min-h-[40px]">
+                                class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md bg-transparent cursor-pointer min-h-[40px]">
                                 <span x-text="selectedName || 'All Companies'"></span>
                                 <button x-show="selectedId" type="button" @click.stop="clearSelection()"
                                     class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
@@ -48,7 +48,7 @@
                         <div x-data="singleSelect({ selectedId: @js(request('factory_location')), options: @js($allFactoryLocations) })"
                             @click.outside="open = false" class="relative mt-1">
                             <div @click="open = !open"
-                                class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md dark:bg-neutral-900 cursor-pointer min-h-[40px]">
+                                class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md bg-transparent cursor-pointer min-h-[40px]">
                                 <span x-text="selectedName || 'All Factory Locations'"></span>
                                 <button x-show="selectedId" type="button" @click.stop="clearSelection()"
                                     class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
@@ -76,7 +76,7 @@
                         <div x-data="singleSelect({ selectedId: @js(request('office_location')), options: @js($allOfficeLocations) })"
                             @click.outside="open = false" class="relative mt-1">
                             <div @click="open = !open"
-                                class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md dark:bg-neutral-900 cursor-pointer min-h-[40px]">
+                                class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md bg-transparent cursor-pointer min-h-[40px]">
                                 <span x-text="selectedName || 'All Office Locations'"></span>
                                 <button x-show="selectedId" type="button" @click.stop="clearSelection()"
                                     class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
@@ -104,7 +104,7 @@
                         <div x-data="singleSelect({ selectedId: @js(request('industry_id')), options: @js($allIndustries) })"
                             @click.outside="open = false" class="relative mt-1">
                             <div @click="open = !open"
-                                class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md  dark:bg-neutral-900 cursor-pointer min-h-[40px]">
+                                class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md bg-transparent cursor-pointer min-h-[40px]">
                                 <span x-text="selectedName || 'All Industries'"></span>
                                 <button x-show="selectedId" type="button" @click.stop="clearSelection()"
                                     class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>

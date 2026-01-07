@@ -11,20 +11,20 @@
     </div>
 
     {{-- START: Filter Section --}}
-    <div class="p-4 bg-gray-50 dark:bg-neutral-800/50 rounded-lg border dark:border-neutral-700">
+    <div class="p-4 bg-gray-50 dark:bg-neutral-800/50 rounded-lg border dark:border-neutral-700 shadow-sm">
         <form action="{{ route('inquiries.index') }}" method="GET" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 items-end">
     
                 {{-- Date From --}}
                 <div>
                     <flux:label>{{ __('Date From') }}</flux:label>
-                    <flux:input name="date_from" type="date" value="{{ request('date_from') }}" />
+                    <flux:input name="date_from" type="date" value="{{ request('date_from') }}" class="bg-transparent" />
                 </div>
     
                 {{-- Date To --}}
                 <div>
                     <flux:label>{{ __('Date To') }}</flux:label>
-                    <flux:input name="date_to" type="date" value="{{ request('date_to') }}" />
+                    <flux:input name="date_to" type="date" value="{{ request('date_to') }}" class="bg-transparent" />
                 </div>
     
                 {{-- Requirement Type --}}
@@ -33,13 +33,13 @@
                     <div x-data="singleSelect({ selectedId: @js(request('requirement_type')), options: @js($allRequirementTypes) })"
                          @click.outside="open = false" class="relative mt-1">
                         <div @click="open = !open"
-                             class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md cursor-pointer min-h-[40px]">
+                             class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md bg-transparent cursor-pointer min-h-[40px]">
                             <span x-text="selectedName || 'All Requirement Types'"></span>
                             <button x-show="selectedId" type="button" @click.stop="clearSelection()"
                                     class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
                         </div>
                         <div x-show="open" x-transition.origin.top.left
-                             class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700"
+                             class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700"
                              style="display:none;">
                             <input type="text" x-model="search" placeholder="Search types..."
                                    class="w-full p-2 mb-2 border-gray-300 rounded-md text-sm dark:bg-neutral-700 dark:text-gray-200">
@@ -61,13 +61,13 @@
                     <div x-data="singleSelect({ selectedId: @js(request('receiver_name')), options: @js($allReceivers) })"
                          @click.outside="open = false" class="relative mt-1">
                         <div @click="open = !open"
-                             class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md cursor-pointer min-h-[40px]">
+                             class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md bg-transparent cursor-pointer min-h-[40px]">
                             <span x-text="selectedName || 'All Assign To'"></span>
                             <button x-show="selectedId" type="button" @click.stop="clearSelection()"
                                     class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
                         </div>
                         <div x-show="open" x-transition.origin.top.left
-                             class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700"
+                             class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700"
                              style="display:none;">
                             <input type="text" x-model="search" placeholder="Search assign to..."
                                    class="w-full p-2 mb-2 border-gray-300 rounded-md text-sm dark:bg-neutral-700 dark:text-gray-200">
@@ -89,13 +89,13 @@
                     <div x-data="singleSelect({ selectedId: @js(request('company_id')), options: @js($allCompanies) })"
                          @click.outside="open = false" class="relative mt-1">
                         <div @click="open = !open"
-                             class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md cursor-pointer min-h-[40px]">
+                             class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md bg-transparent cursor-pointer min-h-[40px]">
                             <span x-text="selectedName || 'All Companies'"></span>
                             <button x-show="selectedId" type="button" @click.stop="clearSelection()"
                                     class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
                         </div>
                         <div x-show="open" x-transition.origin.top.left
-                             class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700"
+                             class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700"
                              style="display:none;">
                             <input type="text" x-model="search" placeholder="Search companies..."
                                    class="w-full p-2 mb-2 border-gray-300 rounded-md text-sm dark:bg-neutral-700 dark:text-gray-200">
@@ -117,13 +117,13 @@
                     <div x-data="singleSelect({ selectedId: @js(request('factory_location')), options: @js($allFactoryLocations) })"
                         @click.outside="open = false" class="relative mt-1">
                         <div @click="open = !open"
-                            class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md dark:bg-neutral-900 cursor-pointer min-h-[40px]">
+                            class="flex items-center w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md bg-transparent cursor-pointer min-h-[40px]">
                             <span x-text="selectedName || 'All Factory Locations'"></span>
                             <button x-show="selectedId" type="button" @click.stop="clearSelection()"
                                 class="ml-auto text-gray-400 hover:text-gray-600">&times;</button>
                         </div>
                         <div x-show="open" x-transition.origin.top.left
-                            class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700"
+                            class="absolute z-10 w-full mt-1 p-2 rounded-lg shadow-xl bg-white dark:bg-neutral-800 border border-gray-200 dark:border-neutral-700"
                             style="display: none;">
                             <input type="text" x-model="search" placeholder="Search locations..."
                                 class="w-full p-2 mb-2 border-gray-300 dark:border-neutral-600 rounded-md text-sm bg-gray-50 dark:bg-neutral-700">
@@ -142,7 +142,7 @@
                 {{-- Process Level --}}
                 <div>
                     <flux:label>{{ __('Status') }}</flux:label>
-                    <flux:select name="process_level">
+                    <flux:select name="process_level" class="bg-transparent">
                         <option value="">{{ __('All Statuses') }}</option>
                         @foreach ($processLevels as $level)
                             <option value="{{ $level }}" @selected(request('process_level') === $level)>{{ $level }}</option>
@@ -297,7 +297,7 @@
                     <div x-show="popupOpen"
                          x-transition.scale.origin.center
                          class="relative bg-white dark:bg-neutral-900 text-gray-900 dark:text-gray-100
-                                w-full max-w-xl rounded-xl shadow-2xl border border-gray-200 dark:border-neutral-700 p-6">
+                                w-full max-w-4xl rounded-xl shadow-2xl border border-gray-200 dark:border-neutral-700 p-6">
             
                         {{-- Header --}}
                         <div class="flex justify-between items-center border-b border-gray-200 dark:border-neutral-700 pb-3 mb-4">
@@ -390,7 +390,7 @@
                 <div class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
                     <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="closeEditPopup()"></div>
                     
-                    <div class="relative bg-white dark:bg-neutral-900 w-full max-w-2xl rounded-xl shadow-2xl border border-gray-200 dark:border-neutral-700 p-6" x-trap.noscroll="editOpen">
+                    <div class="relative bg-white dark:bg-neutral-900 w-full max-w-4xl rounded-xl shadow-2xl border border-gray-200 dark:border-neutral-700 p-6" x-trap.noscroll="editOpen">
                         
                         <div class="flex justify-between items-center mb-4 pb-2 border-b dark:border-neutral-700">
                             <h2 class="text-xl font-bold dark:text-neutral-100">Edit Inquiry #<span x-text="editForm.id"></span></h2>
@@ -403,11 +403,11 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <flux:label>{{ __('Inquiry Date') }}</flux:label>
-                                    <input type="date" x-model="editForm.inquiry_date" class="w-full p-2 border rounded bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
+                                    <input type="date" x-model="editForm.inquiry_date" class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
                                 </div>
                                 <div>
                                     <flux:label>{{ __('Assign To') }}</flux:label>
-                                    <select x-model="editForm.receiver_name" class="w-full p-2 border rounded bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
+                                    <select x-model="editForm.receiver_name" class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
                                         <option value="">Select Assign To</option>
                                         <template x-for="r in allReceivers" :key="r.id">
                                             <option :value="r.id" x-text="r.name" :selected="r.id == editForm.receiver_name"></option>
@@ -419,12 +419,16 @@
                             {{-- Requirement --}}
                             <div>
                                 <flux:label>{{ __('Requirement Type') }}</flux:label>
-                                <select x-model="editForm.requirement_type" class="w-full p-2 border rounded bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
-                                    <option value="">Select Type</option>
-                                    <template x-for="rt in allRequirementTypes" :key="rt.id">
-                                        <option :value="rt.id" x-text="rt.name" :selected="rt.id == editForm.requirement_type"></option>
-                                    </template>
-                                </select>
+                                <div class="relative">
+                                    <input type="text" x-model="editRequirementSearch" @input="filterRequirementTypes()" @focus="showRequirementDropdown=true" @click.outside="showRequirementDropdown=false"
+                                           class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" placeholder="Search requirement type...">
+                                    <div x-show="showRequirementDropdown" class="absolute z-10 w-full mt-1 bg-white dark:bg-neutral-800 border dark:border-neutral-700 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                                        <template x-for="rt in filteredRequirementTypes" :key="rt.id">
+                                            <div @click="selectEditRequirement(rt)" class="p-2 hover:bg-gray-100 dark:hover:bg-neutral-700 cursor-pointer" x-text="rt.name"></div>
+                                        </template>
+                                        <div x-show="filteredRequirementTypes.length === 0" class="p-2 text-gray-500 dark:text-gray-400 text-sm italic">No results found</div>
+                                    </div>
+                                </div>
                             </div>
 
                             {{-- Company --}}
@@ -432,7 +436,7 @@
                                 <flux:label>{{ __('Company') }}</flux:label>
                                 <div class="relative">
                                     <input type="text" x-model="editCompanySearch" @input="filterCompanies()" @focus="showCompanyDropdown=true" @click.outside="showCompanyDropdown=false"
-                                           class="w-full p-2 border rounded bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" placeholder="Search company...">
+                                           class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" placeholder="Search company...">
                                     <div x-show="showCompanyDropdown" class="absolute z-10 w-full mt-1 bg-white dark:bg-neutral-800 border dark:border-neutral-700 rounded-md shadow-lg max-h-60 overflow-y-auto">
                                         <template x-for="c in filteredCompanies" :key="c.id">
                                             <div @click="selectEditCompany(c)" class="p-2 hover:bg-gray-100 dark:hover:bg-neutral-700 cursor-pointer" x-text="c.name"></div>
@@ -444,7 +448,7 @@
                             {{-- Customer (Dynamic) --}}
                             <div>
                                 <flux:label>{{ __('Customer') }}</flux:label>
-                                <select x-model="editForm.customer_id" class="w-full p-2 border rounded bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" :disabled="!editForm.company_id">
+                                <select x-model="editForm.customer_id" class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" :disabled="!editForm.company_id">
                                     <option value="">Select Customer</option>
                                     <template x-for="cust in customersForCompany" :key="cust.id">
                                         <option :value="cust.id" x-text="cust.name" :selected="cust.id == editForm.customer_id"></option>
@@ -458,7 +462,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <flux:label>{{ __('Status') }}</flux:label>
-                                    <select x-model="editForm.process_level" class="w-full p-2 border rounded bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
+                                    <select x-model="editForm.process_level" class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
                                         @foreach ($processLevels as $level)
                                             <option value="{{ $level }}">{{ $level }}</option>
                                         @endforeach
@@ -466,18 +470,21 @@
                                 </div>
                                 <div>
                                     <flux:label>{{ __('Amount (LKR)') }}</flux:label>
-                                    <input type="number" step="0.01" x-model="editForm.amount" class="w-full p-2 border rounded bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white">
+                                    <input type="number" step="0.01" x-model="editForm.amount" class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white">
                                 </div>
                             </div>
 
                             {{-- More Info --}}
                             <div>
                                 <flux:label>{{ __('More Info') }}</flux:label>
-                                <textarea x-model="editForm.more_info" rows="3" class="w-full p-2 border rounded bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white"></textarea>
+                                <textarea x-model="editForm.more_info" rows="3" class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white"></textarea>
                             </div>
 
                             <div class="flex justify-end gap-3 pt-2">
-                                <flux:button type="button" variant="ghost" @click="closeEditPopup()">Cancel</flux:button>
+                                <button @click="closeEditPopup()" 
+                                    class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-gray-800 dark:text-gray-300 rounded-md text-sm font-medium transition">
+                                Cancel
+                            </button>
                                 <flux:button type="submit" variant="primary">Save Changes</flux:button>
                             </div>
                         </form>
@@ -526,6 +533,11 @@ function inquiryTable() {
         editCompanySearch: '',
         showCompanyDropdown: false,
         filteredCompanies: [],
+
+        // Requirement Autocomplete in Edit
+        editRequirementSearch: '',
+        showRequirementDropdown: false,
+        filteredRequirementTypes: [],
         
         // Customer Loading
         customersForCompany: [],
@@ -533,6 +545,7 @@ function inquiryTable() {
 
         init() {
             this.filteredCompanies = this.allCompanies;
+            this.filteredRequirementTypes = this.allRequirementTypes;
         },
 
         openPopup(event, data) {
@@ -554,6 +567,10 @@ function inquiryTable() {
             // Setup Company Search Info
             this.editCompanySearch = data.company_name || '';
             this.filterCompanies();
+
+            // Setup Requirement Search Info
+            this.editRequirementSearch = data.requirement_type || '';
+            this.filterRequirementTypes();
             
             // Fetch Customers
             if(this.editForm.company_id) {
@@ -583,6 +600,20 @@ function inquiryTable() {
             // Fetch customers
             this.fetchCustomers(company.id);
             this.editForm.customer_id = '';
+        },
+
+        filterRequirementTypes() {
+            if(this.editRequirementSearch === '') {
+                this.filteredRequirementTypes = this.allRequirementTypes;
+            } else {
+                this.filteredRequirementTypes = this.allRequirementTypes.filter(rt => rt.name.toLowerCase().includes(this.editRequirementSearch.toLowerCase()));
+            }
+        },
+
+        selectEditRequirement(rt) {
+            this.editForm.requirement_type = rt.name; // Use name as expected by the form/backend
+            this.editRequirementSearch = rt.name;
+            this.showRequirementDropdown = false;
         },
         
         async fetchCustomers(companyId) {
