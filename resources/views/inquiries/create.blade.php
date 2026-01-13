@@ -11,7 +11,7 @@
             @csrf
 
             {{-- Inquiry Date --}}
-            <flux:input name="inquiry_date" :label="__('Inquiry Date')" type="date" required />
+            <flux:input name="inquiry_date" :label="__('Inquiry Date')" type="date" value="{{ date('Y-m-d') }}" required />
 
             {{-- Assign To --}}
             <flux:label>{{ __('Assign To') }}<span class="text-red-500">*</span></flux:label>
@@ -234,6 +234,24 @@
             </flux:select>
 
             <flux:input name="amount" :label="__('Amount (LKR)')" type="number" step="0.01" />
+
+            {{-- Inquiry Type --}}
+            <div
+                class="flex items-center gap-3 p-4 bg-gray-50 dark:bg-neutral-800/50 rounded-lg border dark:border-neutral-700">
+                <div class="relative h-6 flex items-center">
+                    <input id="is_ecommerce" type="checkbox"
+                        @change="selectedInquiryType = $event.target.checked ? 'Store Inquiry' : 'Website Inquiry'"
+                        class="w-5 h-5 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
+                </div>
+                <div class="text-sm">
+                    <flux:label for="is_ecommerce"
+                        class="font-medium text-gray-900 dark:text-neutral-100">{{ __('Store Inquiry') }}</flux:label>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                        {{ __('Tick this if the inquiry is from an ecommerce store.') }}</p>
+                </div>
+                <input type="hidden" name="inquiry_type" :value="selectedInquiryType">
+            </div>
+
             <flux:textarea name="more_info" :label="__('More Information')" rows="3"></flux:textarea>
 
             <div class="flex justify-end pt-4 gap-3">
@@ -259,6 +277,7 @@
                 selectedCompanyId: null,
                 selectedCustomerId: null,
                 selectedRequirementName: null,
+                selectedInquiryType: 'Website Inquiry',
 
                 // dropdown state
                 openCompany: false,

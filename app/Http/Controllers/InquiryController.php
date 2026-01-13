@@ -42,6 +42,11 @@ class InquiryController extends Controller
             $query->where('company_id', $request->input('company_id'));
         }
 
+        // inquiry type
+        if ($request->filled('inquiry_type')) {
+            $query->where('inquiry_type', $request->input('inquiry_type'));
+        }
+
         return $query;
     }
 
@@ -57,6 +62,10 @@ class InquiryController extends Controller
             'Discussing',
             'Settled',
             'Dropped'
+        ];
+        $allInquiryTypes = [
+            ['id' => 'Website Inquiry', 'name' => 'Website Inquiry'],
+            ['id' => 'Store Inquiry', 'name' => 'Store Inquiry'],
         ];
 
         // Convert to plain arrays for Alpine <=> @js()
@@ -99,6 +108,9 @@ class InquiryController extends Controller
                 $q->where('factory_location', $request->factory_location);
             });
         }
+        if ($request->filled('inquiry_type')) {
+            $query->where('inquiry_type', $request->inquiry_type);
+        }
 
         // Export CSV
         if ($request->filled('export') && $request->export === 'csv') {
@@ -115,7 +127,8 @@ class InquiryController extends Controller
             'allRequirementTypes',
             'allReceivers',
             'processLevels',
-            'allFactoryLocations'
+            'allFactoryLocations',
+            'allInquiryTypes'
         ));
     }
 
@@ -147,6 +160,7 @@ class InquiryController extends Controller
                 'Date',
                 'Requirement Type',
                 'Assign To',
+                'Inquiry Type',
                 'Company',
                 'Industry',
                 'Customer Name',
@@ -172,6 +186,7 @@ class InquiryController extends Controller
                     $inquiry->inquiry_date,
                     $inquiry->requirement_type,
                     $inquiry->receiver_name,
+                    $inquiry->inquiry_type,
                     $inquiry->company->name ?? '',
                     $industry,
                     $customerName,
@@ -290,6 +305,7 @@ class InquiryController extends Controller
             'more_info' => 'nullable|string',
             'amount' => 'nullable|numeric',
             'process_level' => 'required|string|max:255',
+            'inquiry_type' => 'required|string|max:255',
         ]);
 
         // override with resolved IDs if present
@@ -349,6 +365,7 @@ class InquiryController extends Controller
             'more_info' => 'nullable|string',
             'amount' => 'nullable|numeric',
             'process_level' => 'required|string|max:255',
+            'inquiry_type' => 'required|string|max:255',
         ]);
 
         if ($request->input('process_level') === 'Settled' && empty($request->input('amount'))) {
