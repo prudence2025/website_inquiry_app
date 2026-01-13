@@ -350,7 +350,9 @@
                             <p><span class="font-semibold text-gray-600 dark:text-gray-300">Requirement Type:</span><br> 
                                 <span x-text="selectedInquiry.type"></span>
                             </p>
-            
+                            <p><span class="font-semibold text-gray-600 dark:text-gray-300">Inquiry Type:</span><br> 
+                                <span x-text="selectedInquiry.inquiry_type"></span>
+                            </p>
                             <p><span class="font-semibold text-gray-600 dark:text-gray-300">Company:</span><br> 
                                 <span x-text="selectedInquiry.company"></span>
                             </p>
@@ -376,9 +378,6 @@
                             </p>
                             <p><span class="font-semibold text-gray-600 dark:text-gray-300">Amount:</span><br> 
                                 LKR <span x-text="selectedInquiry.amount_formatted"></span>
-                            </p>
-                            <p><span class="font-semibold text-gray-600 dark:text-gray-300">Inquiry Type:</span><br> 
-                                <span x-text="selectedInquiry.inquiry_type"></span>
                             </p>
                         </div>
             
@@ -434,6 +433,16 @@
                                 </div>
                             </div>
 
+                             {{-- Inquiry Type --}}
+                            <div>
+                                <flux:label>{{ __('Inquiry Type') }}</flux:label>
+                                <select x-model="editForm.inquiry_type" class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
+                                    @foreach ($allInquiryTypes as $type)
+                                        <option value="{{ $type['id'] }}">{{ $type['name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
                             {{-- Requirement --}}
                             <div>
                                 <flux:label>{{ __('Requirement Type') }}</flux:label>
@@ -480,26 +489,18 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <flux:label>{{ __('Status') }}</flux:label>
-                                    <select x-model="editForm.process_level" class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
+                                    <select x-model="editForm.process_level" 
+                                            x-bind:disabled="editForm.inquiry_type === 'Store Inquiry'"
+                                            class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
                                         @foreach ($processLevels as $level)
                                             <option value="{{ $level }}">{{ $level }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div>
-                                    <flux:label>{{ __('Amount (LKR)') }}</flux:label>
-                                    <input type="number" step="0.01" x-model="editForm.amount" class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white">
+                                    <flux:label>{{ __('Amount (LKR)') }}<span class="text-red-500" x-show="editForm.inquiry_type === 'Store Inquiry'">*</span></flux:label>
+                                    <input type="number" step="0.01" x-model="editForm.amount" x-bind:required="editForm.inquiry_type === 'Store Inquiry'" class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white">
                                 </div>
-                            </div>
-
-                            {{-- Inquiry Type --}}
-                            <div>
-                                <flux:label>{{ __('Inquiry Type') }}</flux:label>
-                                <select x-model="editForm.inquiry_type" class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
-                                    @foreach ($allInquiryTypes as $type)
-                                        <option value="{{ $type['id'] }}">{{ $type['name'] }}</option>
-                                    @endforeach
-                                </select>
                             </div>
 
                             {{-- More Info --}}
@@ -575,6 +576,12 @@ function inquiryTable() {
         init() {
             this.filteredCompanies = this.allCompanies;
             this.filteredRequirementTypes = this.allRequirementTypes;
+
+            this.$watch('editForm.inquiry_type', (val) => {
+                if (val === 'Store Inquiry') {
+                    this.editForm.process_level = 'Settled';
+                }
+            });
         },
 
         openPopup(event, data) {

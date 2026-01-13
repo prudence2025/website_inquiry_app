@@ -11,6 +11,7 @@ use App\Models\RequirementType;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 
 class InquiryController extends Controller
 {
@@ -303,8 +304,13 @@ class InquiryController extends Controller
             'company_id' => 'nullable|exists:companies,id',
             'customer_id' => 'nullable|exists:customers,id',
             'more_info' => 'nullable|string',
-            'amount' => 'nullable|numeric',
-            'process_level' => 'required|string|max:255',
+            'amount' => 'required_if:inquiry_type,Store Inquiry|nullable|numeric',
+            'process_level' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::when($request->inquiry_type === 'Store Inquiry', ['in:Settled'])
+            ],
             'inquiry_type' => 'required|string|max:255',
         ]);
 
@@ -363,8 +369,13 @@ class InquiryController extends Controller
             'company_id' => 'nullable|exists:companies,id',
             'customer_id' => 'nullable|exists:customers,id',
             'more_info' => 'nullable|string',
-            'amount' => 'nullable|numeric',
-            'process_level' => 'required|string|max:255',
+            'amount' => 'required_if:inquiry_type,Store Inquiry|nullable|numeric',
+            'process_level' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::when($request->inquiry_type === 'Store Inquiry', ['in:Settled'])
+            ],
             'inquiry_type' => 'required|string|max:255',
         ]);
 
