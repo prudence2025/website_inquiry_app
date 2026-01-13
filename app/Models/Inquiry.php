@@ -21,7 +21,7 @@ class Inquiry extends Model
         'more_info',
         'amount',
         'process_level',
-        'inquiry_type',
+        'inquiry_source',
     ];
 
     public function company()

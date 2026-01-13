@@ -43,9 +43,9 @@ class InquiryController extends Controller
             $query->where('company_id', $request->input('company_id'));
         }
 
-        // inquiry type
-        if ($request->filled('inquiry_type')) {
-            $query->where('inquiry_type', $request->input('inquiry_type'));
+        // inquiry source
+        if ($request->filled('inquiry_source')) {
+            $query->where('inquiry_source', $request->input('inquiry_source'));
         }
 
         return $query;
@@ -64,7 +64,7 @@ class InquiryController extends Controller
             'Settled',
             'Dropped'
         ];
-        $allInquiryTypes = [
+        $allInquirySources = [
             ['id' => 'Website Inquiry', 'name' => 'Website Inquiry'],
             ['id' => 'Store Inquiry', 'name' => 'Store Inquiry'],
         ];
@@ -109,8 +109,8 @@ class InquiryController extends Controller
                 $q->where('factory_location', $request->factory_location);
             });
         }
-        if ($request->filled('inquiry_type')) {
-            $query->where('inquiry_type', $request->inquiry_type);
+        if ($request->filled('inquiry_source')) {
+            $query->where('inquiry_source', $request->inquiry_source);
         }
 
         // Export CSV
@@ -129,7 +129,7 @@ class InquiryController extends Controller
             'allReceivers',
             'processLevels',
             'allFactoryLocations',
-            'allInquiryTypes'
+            'allInquirySources'
         ));
     }
 
@@ -161,7 +161,7 @@ class InquiryController extends Controller
                 'Date',
                 'Requirement Type',
                 'Assign To',
-                'Inquiry Type',
+                'Inquiry Source',
                 'Company',
                 'Industry',
                 'Customer Name',
@@ -187,7 +187,7 @@ class InquiryController extends Controller
                     $inquiry->inquiry_date,
                     $inquiry->requirement_type,
                     $inquiry->receiver_name,
-                    $inquiry->inquiry_type,
+                    $inquiry->inquiry_source,
                     $inquiry->company->name ?? '',
                     $industry,
                     $customerName,
@@ -304,14 +304,14 @@ class InquiryController extends Controller
             'company_id' => 'nullable|exists:companies,id',
             'customer_id' => 'nullable|exists:customers,id',
             'more_info' => 'nullable|string',
-            'amount' => 'required_if:inquiry_type,Store Inquiry|nullable|numeric',
+            'amount' => 'required_if:inquiry_source,Store Inquiry|nullable|numeric',
             'process_level' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::when($request->inquiry_type === 'Store Inquiry', ['in:Settled'])
+                Rule::when($request->inquiry_source === 'Store Inquiry', ['in:Settled'])
             ],
-            'inquiry_type' => 'required|string|max:255',
+            'inquiry_source' => 'required|string|max:255',
         ]);
 
         // override with resolved IDs if present
@@ -369,14 +369,14 @@ class InquiryController extends Controller
             'company_id' => 'nullable|exists:companies,id',
             'customer_id' => 'nullable|exists:customers,id',
             'more_info' => 'nullable|string',
-            'amount' => 'required_if:inquiry_type,Store Inquiry|nullable|numeric',
+            'amount' => 'required_if:inquiry_source,Store Inquiry|nullable|numeric',
             'process_level' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::when($request->inquiry_type === 'Store Inquiry', ['in:Settled'])
+                Rule::when($request->inquiry_source === 'Store Inquiry', ['in:Settled'])
             ],
-            'inquiry_type' => 'required|string|max:255',
+            'inquiry_source' => 'required|string|max:255',
         ]);
 
         if ($request->input('process_level') === 'Settled' && empty($request->input('amount'))) {

@@ -150,13 +150,13 @@
                     </flux:select>
                 </div>
 
-                {{-- Inquiry Type --}}
+                {{-- Inquiry Source --}}
                 <div>
-                    <flux:label>{{ __('Inquiry Type') }}</flux:label>
-                    <flux:select name="inquiry_type" class="bg-transparent">
-                        <option value="">{{ __('All Types') }}</option>
-                        @foreach ($allInquiryTypes as $type)
-                            <option value="{{ $type['id'] }}" @selected(request('inquiry_type') === $type['id'])>{{ $type['name'] }}</option>
+                    <flux:label>{{ __('Inquiry Source') }}</flux:label>
+                    <flux:select name="inquiry_source" class="bg-transparent">
+                        <option value="">{{ __('All Sources') }}</option>
+                        @foreach ($allInquirySources as $source)
+                            <option value="{{ $source['id'] }}" @selected(request('inquiry_source') === $source['id'])>{{ $source['name'] }}</option>
                         @endforeach
                     </flux:select>
                 </div>
@@ -187,7 +187,7 @@
                     <th scope="col" class="px-6 py-3">{{ __('Requirement Type') }}</th>
                     <th scope="col" class="px-6 py-3">{{ __('Customer / Contact') }}</th>
                     <th scope="col" class="px-6 py-3">{{ __('Company') }}</th>
-                    <th scope="col" class="px-6 py-3 text-center">{{ __('Inquiry Type') }}</th>
+                    <th scope="col" class="px-6 py-3 text-center">{{ __('Inquiry Source') }}</th>
                     <th scope="col" class="px-6 py-3 text-center">{{ __('Status') }}</th>
                     <th scope="col" class="px-6 py-3 w-[150px] text-center">{{ __('Actions') }}</th>
                 </tr>
@@ -223,7 +223,7 @@
                             amount_formatted: '{{ number_format($inquiry->amount ?? 0, 2) }}', // Display amount
                             info: @js($inquiry->more_info ?? ''),
                             more_info: @js($inquiry->more_info ?? ''), // Alias for edit
-                            inquiry_type: '{{ $inquiry->inquiry_type }}'
+                            inquiry_source: '{{ $inquiry->inquiry_source }}'
                         })"
                             type: '{{ $inquiry->requirement_type }}',
                             receiver: '{{ $inquiry->receiver_name }}',
@@ -256,7 +256,7 @@
                             <p class="text-xs text-gray-500 dark:text-gray-400">({{ $inquiry->company->industries->first()->name }})</p>
                         @endif
                     </td>
-                    <td class="px-6 py-2 text-center text-xs text-gray-900 dark:text-white">{{ $inquiry->inquiry_type }}</td>
+                    <td class="px-6 py-2 text-center text-xs text-gray-900 dark:text-white">{{ $inquiry->inquiry_source }}</td>
                     <td class="px-6 py-2 text-center">
                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                             @switch($inquiry->process_level)
@@ -284,7 +284,7 @@
                                 process_level: '{{ $inquiry->process_level }}',
                                 amount: '{{ $inquiry->amount }}',
                                 more_info: @js($inquiry->more_info ?? ''),
-                                inquiry_type: '{{ $inquiry->inquiry_type }}'
+                                inquiry_source: '{{ $inquiry->inquiry_source }}'
                             })" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">
                                 Edit
                             </button>
@@ -350,8 +350,8 @@
                             <p><span class="font-semibold text-gray-600 dark:text-gray-300">Requirement Type:</span><br> 
                                 <span x-text="selectedInquiry.type"></span>
                             </p>
-                            <p><span class="font-semibold text-gray-600 dark:text-gray-300">Inquiry Type:</span><br> 
-                                <span x-text="selectedInquiry.inquiry_type"></span>
+                            <p><span class="font-semibold text-gray-600 dark:text-gray-300">Inquiry Source:</span><br> 
+                                <span x-text="selectedInquiry.inquiry_source"></span>
                             </p>
                             <p><span class="font-semibold text-gray-600 dark:text-gray-300">Company:</span><br> 
                                 <span x-text="selectedInquiry.company"></span>
@@ -433,12 +433,12 @@
                                 </div>
                             </div>
 
-                             {{-- Inquiry Type --}}
+                             {{-- Inquiry Source --}}
                             <div>
-                                <flux:label>{{ __('Inquiry Type') }}</flux:label>
-                                <select x-model="editForm.inquiry_type" class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
-                                    @foreach ($allInquiryTypes as $type)
-                                        <option value="{{ $type['id'] }}">{{ $type['name'] }}</option>
+                                <flux:label>{{ __('Inquiry Source') }}</flux:label>
+                                <select x-model="editForm.inquiry_source" class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
+                                    @foreach ($allInquirySources as $source)
+                                        <option value="{{ $source['id'] }}">{{ $source['name'] }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -485,12 +485,12 @@
                                 <p x-show="loadingCustomers" class="text-xs text-blue-500 mt-1">Loading customers...</p>
                             </div>
 
-                            {{-- Status & Amount --}}
+                             {{-- Status & Amount --}}
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <flux:label>{{ __('Status') }}</flux:label>
                                     <select x-model="editForm.process_level" 
-                                            x-bind:disabled="editForm.inquiry_type === 'Store Inquiry'"
+                                            x-bind:disabled="editForm.inquiry_source === 'Store Inquiry'"
                                             class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white" required>
                                         @foreach ($processLevels as $level)
                                             <option value="{{ $level }}">{{ $level }}</option>
@@ -498,8 +498,8 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <flux:label>{{ __('Amount (LKR)') }}<span class="text-red-500" x-show="editForm.inquiry_type === 'Store Inquiry'">*</span></flux:label>
-                                    <input type="number" step="0.01" x-model="editForm.amount" x-bind:required="editForm.inquiry_type === 'Store Inquiry'" class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white">
+                                    <flux:label>{{ __('Amount (LKR)') }}<span class="text-red-500" x-show="editForm.inquiry_source === 'Store Inquiry'">*</span></flux:label>
+                                    <input type="number" step="0.01" x-model="editForm.amount" x-bind:required="editForm.inquiry_source === 'Store Inquiry'" class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white">
                                 </div>
                             </div>
 
@@ -556,7 +556,7 @@ function inquiryTable() {
             process_level: '',
             amount: '',
             more_info: '',
-            inquiry_type: ''
+            inquiry_source: ''
         },
         
         // Company Autocomplete in Edit
@@ -577,7 +577,7 @@ function inquiryTable() {
             this.filteredCompanies = this.allCompanies;
             this.filteredRequirementTypes = this.allRequirementTypes;
 
-            this.$watch('editForm.inquiry_type', (val) => {
+            this.$watch('editForm.inquiry_source', (val) => {
                 if (val === 'Store Inquiry') {
                     this.editForm.process_level = 'Settled';
                 }
@@ -618,7 +618,7 @@ function inquiryTable() {
         
         closeEditPopup() {
             this.editOpen = false;
-            this.editForm = { id: null, inquiry_date: '', receiver_name: '', requirement_type: '', company_id: '', customer_id: '', process_level: '', amount: '', more_info: '', inquiry_type: '' };
+            this.editForm = { id: null, inquiry_date: '', receiver_name: '', requirement_type: '', company_id: '', customer_id: '', process_level: '', amount: '', more_info: '', inquiry_source: '' };
         },
         
         filterCompanies() {

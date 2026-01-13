@@ -23,12 +23,12 @@
                 @endforeach
             </flux:select>
 
-            {{-- Inquiry Type --}}
+            {{-- Inquiry Source --}}
             <div
                 class="flex items-center gap-3 p-4 bg-gray-50 dark:bg-neutral-800/50 rounded-lg border dark:border-neutral-700">
                 <div class="relative h-6 flex items-center">
                     <input id="is_ecommerce" type="checkbox"
-                        x-on:change="selectedInquiryType = $event.target.checked ? 'Store Inquiry' : 'Website Inquiry'"
+                        x-on:change="selectedInquirySource = $event.target.checked ? 'Store Inquiry' : 'Website Inquiry'"
                         class="w-5 h-5 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-neutral-700 dark:border-neutral-600">
                 </div>
                 <div class="text-sm">
@@ -39,7 +39,7 @@
                         {{ __('Tick this if the inquiry is from an ecommerce store.') }}
                     </p>
                 </div>
-                <input type="hidden" name="inquiry_type" x-bind:value="selectedInquiryType">
+                <input type="hidden" name="inquiry_source" x-bind:value="selectedInquirySource">
             </div>
 
             {{-- Requirement Type --}}
@@ -247,7 +247,7 @@
             {{-- Process Level --}}
             <flux:label>{{ __('Process Level') }}<span class="text-red-500">*</span></flux:label>
             <select name="process_level" x-model="selectedProcessLevel"
-                x-bind:disabled="selectedInquiryType === 'Store Inquiry'"
+                x-bind:disabled="selectedInquirySource === 'Store Inquiry'"
                 class="w-full p-2 border rounded bg-gray-50 text-gray-900 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white"
                 required>
                 <option value="">{{ __('Select Process Level') }}</option>
@@ -256,12 +256,12 @@
                 </template>
             </select>
             <input type="hidden" name="process_level" value="Settled"
-                x-bind:disabled="selectedInquiryType !== 'Store Inquiry'">
-
+                x-bind:disabled="selectedInquirySource !== 'Store Inquiry'">
+ 
             <flux:label>{{ __('Amount (LKR)') }}<span class="text-red-500"
-                    x-show="selectedInquiryType === 'Store Inquiry'">*</span></flux:label>
+                    x-show="selectedInquirySource === 'Store Inquiry'">*</span></flux:label>
             <flux:input name="amount" type="number" step="0.01"
-                x-bind:required="selectedInquiryType === 'Store Inquiry'" />
+                x-bind:required="selectedInquirySource === 'Store Inquiry'" />
 
             <flux:textarea name="more_info" :label="__('More Information')" rows="3"></flux:textarea>
 
@@ -288,7 +288,7 @@
                 selectedCompanyId: null,
                 selectedCustomerId: null,
                 selectedRequirementName: null,
-                selectedInquiryType: 'Website Inquiry',
+                selectedInquirySource: 'Website Inquiry',
                 selectedProcessLevel: '',
 
                 // dropdown state
@@ -329,7 +329,7 @@
                     // ensure each company has customers array
                     this.companies.forEach(c => { if (!Array.isArray(c.customers)) c.customers = []; });
 
-                    this.$watch('selectedInquiryType', (val) => {
+                    this.$watch('selectedInquirySource', (val) => {
                         if (val === 'Store Inquiry') {
                             this.selectedProcessLevel = 'Settled';
                         }
